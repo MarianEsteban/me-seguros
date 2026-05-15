@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <!-- Configuración básica del documento -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ME Seguros - Mariano Esteban, asesor de seguros en Miramar. Cotizá seguros automotor, hogar, comercio, vida, accidentes personales y asistencia al viajero por WhatsApp.">
+  <title>ME Seguros | Mariano Esteban - Asesor de Seguros</title>
+
+  <!-- Tipografías y estilos principales -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Header fijo: logo, navegación interna y acceso directo a WhatsApp -->
+  <header class="site-header" id="inicio">
+    <div class="container header-content">
+      <a class="brand" href="#inicio" aria-label="Ir al inicio de ME Seguros">
+        <img src="img/logo-me-seguros.png" alt="Logo ME Seguros" class="brand-logo">
+        <span class="brand-fallback">ME Seguros</span>
+      </a>
+
+      <button class="nav-toggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="primary-navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <nav class="primary-nav" id="primary-navigation" aria-label="Navegación principal">
+        <a href="#servicios">Servicios</a>
+        <a href="#asesor">Asesor</a>
+        <a href="#sobre-mi">Sobre mí</a>
+        <a href="#preguntas">FAQ</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+
+      <a class="btn btn-small btn-primary header-cta" href="https://wa.me/542291462116?text=Hola%20Mariano%2C%20quiero%20hacer%20una%20consulta%20sobre%20seguros." target="_blank" rel="noopener">
+        Consultar por WhatsApp
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero: propuesta de valor principal y llamada a la acción -->
+    <section class="hero section-padding">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Mariano Esteban · Asesor de Seguros</p>
+          <h1>Seguros claros, respaldo real y atención personalizada.</h1>
+          <p class="hero-description">
+            Protegé tu auto, hogar, comercio y proyectos con un asesor cercano que te acompaña antes, durante y después de contratar.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="https://wa.me/542291462116?text=Hola%20Mariano%2C%20quiero%20cotizar%20un%20seguro." target="_blank" rel="noopener">
+              Cotizar por WhatsApp
+            </a>
+            <a class="btn btn-secondary" href="#servicios">Ver coberturas</a>
+          </div>
+          <div class="trust-row" aria-label="Beneficios destacados">
+            <span>Respuesta ágil</span>
+            <span>Asesoramiento humano</span>
+            <span>Opciones a medida</span>
+          </div>
+        </div>
+
+        <div class="hero-card" aria-label="Resumen de beneficios de ME Seguros">
+          <div class="hero-card-top">
+            <span class="status-dot"></span>
+            <span>Atención disponible por WhatsApp</span>
+          </div>
+          <h2>Tu tranquilidad empieza con una buena decisión.</h2>
+          <p>Analizo tus necesidades, comparo alternativas y te ayudo a elegir una cobertura adecuada para cada etapa.</p>
+          <div class="metric-grid">
+            <div>
+              <strong>6+</strong>
+              <span>Ramos de cobertura</span>
+            </div>
+            <div>
+              <strong>1:1</strong>
+              <span>Acompañamiento directo</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Servicios: listado de seguros disponibles -->
+    <section class="services section-padding" id="servicios">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Coberturas</p>
+          <h2>Seguros para cuidar lo que importa.</h2>
+          <p>Soluciones pensadas para personas, familias, profesionales y comercios.</p>
+        </div>
+
+        <div class="cards-grid">
+          <article class="service-card">
+            <span class="card-icon">🚗</span>
+            <h3>Seguro automotor</h3>
+            <p>Coberturas para autos y vehículos, con opciones según uso, presupuesto y nivel de protección.</p>
+          </article>
+          <article class="service-card">
+            <span class="card-icon">🏠</span>
+            <h3>Seguro de hogar</h3>
+            <p>Protección para tu vivienda, pertenencias y responsabilidad familiar ante imprevistos cotidianos.</p>
+          </article>
+          <article class="service-card">
+            <span class="card-icon">🏪</span>
+            <h3>Seguro de comercio</h3>
+            <p>Respaldo para locales, oficinas y actividades comerciales frente a daños, robos y riesgos operativos.</p>
+          </article>
+          <article class="service-card">
+            <span class="card-icon">🛡️</span>
+            <h3>Seguro de vida</h3>
+            <p>Planes para acompañar a quienes más querés y planificar protección económica a largo plazo.</p>
+          </article>
+          <article class="service-card">
+            <span class="card-icon">⚕️</span>
+            <h3>Accidentes personales</h3>
+            <p>Cobertura ante accidentes para trabajadores independientes, equipos y actividades específicas.</p>
+          </article>
+          <article class="service-card">
+            <span class="card-icon">✈️</span>
+            <h3>Asistencia al viajero</h3>
+            <p>Viajá con respaldo médico y asistencia para resolver emergencias lejos de casa.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Diferencial: explica por qué conviene contratar con asesor -->
+    <section class="advisor section-padding" id="asesor">
+      <div class="container split-section">
+        <div class="section-heading align-left">
+          <p class="eyebrow">Asesoramiento profesional</p>
+          <h2>Por qué contratar con un asesor.</h2>
+          <p>Un seguro no debería elegirse solo por precio. También importa entender qué cubre, qué excluye y cómo actuar cuando lo necesitás.</p>
+        </div>
+
+        <div class="benefits-list">
+          <div class="benefit-item">
+            <span>01</span>
+            <div>
+              <h3>Te ayudo a comparar opciones</h3>
+              <p>Revisamos alternativas de cobertura para encontrar una solución equilibrada entre protección y costo.</p>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <span>02</span>
+            <div>
+              <h3>Tenés acompañamiento real</h3>
+              <p>Ante dudas, cambios o siniestros, contás con una persona que conoce tu caso y puede orientarte.</p>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <span>03</span>
+            <div>
+              <h3>Contratás con más claridad</h3>
+              <p>Te explico condiciones, alcances y requisitos para que tomes decisiones con información simple.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sobre mí: presentación breve de Mariano Esteban -->
+    <section class="about section-padding" id="sobre-mi">
+      <div class="container about-card">
+        <div>
+          <p class="eyebrow">Sobre mí</p>
+          <h2>Mariano Esteban, asesor de seguros.</h2>
+        </div>
+        <p>
+          En ME Seguros trabajo para que contratar una póliza sea simple, transparente y bien acompañado. Mi objetivo es escuchar tu necesidad, explicarte cada alternativa con claridad y ayudarte a proteger tu patrimonio, tu familia o tu actividad con una cobertura adecuada.
+        </p>
+      </div>
+    </section>
+
+    <!-- Preguntas frecuentes: acordeón controlado con JavaScript simple -->
+    <section class="faq section-padding" id="preguntas">
+      <div class="container narrow-container">
+        <div class="section-heading">
+          <p class="eyebrow">Preguntas frecuentes</p>
+          <h2>Dudas habituales antes de cotizar.</h2>
+        </div>
+
+        <div class="faq-list">
+          <article class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              ¿Puedo pedir una cotización por WhatsApp?
+              <span>+</span>
+            </button>
+            <div class="faq-answer">
+              <p>Sí. Escribime por WhatsApp y te voy a pedir los datos necesarios para preparar una propuesta según el tipo de seguro.</p>
+            </div>
+          </article>
+          <article class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              ¿Qué datos necesito para cotizar?
+              <span>+</span>
+            </button>
+            <div class="faq-answer">
+              <p>Depende de la cobertura. Por ejemplo, para automotor suelen solicitarse datos del vehículo y del titular; para hogar o comercio, ubicación y características del inmueble.</p>
+            </div>
+          </article>
+          <article class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              ¿Me acompañás si tengo un siniestro?
+              <span>+</span>
+            </button>
+            <div class="faq-answer">
+              <p>Sí. La idea es que tengas orientación para saber cómo avanzar, qué documentación reunir y cuáles son los pasos habituales.</p>
+            </div>
+          </article>
+          <article class="faq-item">
+            <button class="faq-question" type="button" aria-expanded="false">
+              ¿La consulta inicial tiene costo?
+              <span>+</span>
+            </button>
+            <div class="faq-answer">
+              <p>No. Podés consultar y cotizar sin compromiso para evaluar opciones antes de contratar.</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contacto final: cierre enfocado en conversión a WhatsApp -->
+    <section class="contact section-padding" id="contacto">
+      <div class="container contact-card">
+        <div>
+          <p class="eyebrow">Contacto</p>
+          <h2>Hablemos de la cobertura que necesitás.</h2>
+          <p>Mandame un mensaje y coordinamos la mejor forma de proteger lo que querés cuidar.</p>
+        </div>
+        <div class="contact-actions">
+          <a class="btn btn-primary" href="https://wa.me/542291462116?text=Hola%20Mariano%2C%20quiero%20hacer%20una%20consulta%20sobre%20seguros." target="_blank" rel="noopener">
+            Escribir al 2291 462116
+          </a>
+          <address>20 NRO 899, Miramar</address>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer simple con logo y datos esenciales -->
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <a class="brand" href="#inicio" aria-label="Volver al inicio de ME Seguros">
+        <img src="img/logo-me-seguros.png" alt="Logo ME Seguros" class="brand-logo">
+        <span class="brand-fallback">ME Seguros</span>
+      </a>
+      <p>© <span id="current-year"></span> ME Seguros · Mariano Esteban - Asesor de Seguros.</p>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
