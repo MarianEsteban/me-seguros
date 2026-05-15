@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const currentYear = document.querySelector("#current-year");
   const brandLogos = document.querySelectorAll(".brand-logo");
 
-  // Si el logo todavía no está cargado en assets/img/mariano-seguros-blanco 3.png, evita mostrar el ícono de imagen rota.
+  // Si el logo todavía no está cargado en assets/img/logo-verde.png, evita mostrar el ícono de imagen rota.
   brandLogos.forEach((logo) => {
     const showFallback = () => {
       logo.style.display = "none";

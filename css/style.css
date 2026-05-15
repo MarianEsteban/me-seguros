@@ -9,12 +9,12 @@
   --color-surface-soft: #fbfaf7;
   --color-text: #14213d;
   --color-muted: #687083;
-  --color-primary: #0f3d5e;
-  --color-primary-dark: #09283f;
+  --color-primary: #3b5c3c;
+  --color-primary-dark: #1f3724;
   --color-accent: #c9a45c;
   --color-accent-soft: #efe3c9;
   --color-border: rgba(20, 33, 61, 0.12);
-  --shadow-soft: 0 24px 70px rgba(15, 61, 94, 0.12);
+  --shadow-soft: 0 24px 70px rgba(31, 55, 36, 0.14);
   --radius-large: 28px;
   --radius-medium: 18px;
   --container: 1120px;
@@ -66,14 +66,14 @@ textarea {
   padding: 96px 0;
 }
 
-/* Header fijo con fondo oscuro translúcido para asegurar legibilidad del logo blanco */
+/* Header fijo con fondo verde oliva oscuro translúcido para integrar el logo de marca */
 .site-header {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: rgba(7, 30, 48, 0.92);
+  background: rgba(31, 55, 36, 0.94);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 18px 44px rgba(7, 30, 48, 0.16);
+  box-shadow: 0 18px 44px rgba(31, 55, 36, 0.18);
   backdrop-filter: blur(18px);
 }
 
@@ -81,7 +81,7 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 82px;
+  min-height: 104px;
   gap: 24px;
 }
 
@@ -95,10 +95,13 @@ textarea {
 }
 
 .brand-logo {
-  width: auto;
-  max-width: 168px;
-  max-height: 50px;
+  width: clamp(78px, 8vw, 94px);
+  height: auto;
+  max-width: none;
+  max-height: none;
   object-fit: contain;
+  border-radius: 18px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
 }
 
 /* Texto de respaldo por si el logo aún no fue subido */
@@ -169,11 +172,11 @@ textarea {
 .btn-primary {
   color: #ffffff;
   background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
-  box-shadow: 0 16px 30px rgba(15, 61, 94, 0.22);
+  box-shadow: 0 16px 30px rgba(31, 55, 36, 0.24);
 }
 
 .btn-primary:hover {
-  box-shadow: 0 20px 36px rgba(15, 61, 94, 0.28);
+  box-shadow: 0 20px 36px rgba(31, 55, 36, 0.3);
 }
 
 .btn-secondary {
@@ -217,7 +220,7 @@ textarea {
   bottom: 20px;
   width: 320px;
   height: 320px;
-  background: rgba(15, 61, 94, 0.12);
+  background: rgba(59, 92, 60, 0.14);
 }
 
 .hero-grid {
@@ -563,7 +566,7 @@ address {
 /* Footer */
 .site-footer {
   padding: 34px 0;
-  background: #071e30;
+  background: #1f3724;
   color: rgba(255, 255, 255, 0.72);
 }
 
@@ -575,7 +578,8 @@ address {
 }
 
 .footer-content .brand-logo {
-  filter: brightness(1.08);
+  width: 88px;
+  filter: none;
 }
 
 .footer-content p {
@@ -595,7 +599,7 @@ address {
 
   .primary-nav {
     position: absolute;
-    top: 82px;
+    top: 104px;
     left: 16px;
     right: 16px;
     display: none;
@@ -644,16 +648,15 @@ address {
   }
 
   .header-content {
-    min-height: 74px;
+    min-height: 86px;
   }
 
   .brand-logo {
-    max-width: 132px;
-    max-height: 42px;
+    width: 68px;
   }
 
   .primary-nav {
-    top: 74px;
+    top: 86px;
   }
 
   .hero-actions,
