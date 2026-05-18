@@ -403,10 +403,22 @@ h3 {
   width: 52px;
   height: 52px;
   margin-bottom: 28px;
-  background: var(--color-surface-soft);
+  color: var(--color-primary);
+  background: linear-gradient(145deg, #ffffff, var(--color-surface-soft));
   border: 1px solid var(--color-border);
   border-radius: 18px;
-  font-size: 1.5rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 10px 24px rgba(31, 55, 36, 0.08);
+}
+
+.card-icon svg,
+.contact-icon svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .service-card p,
@@ -471,6 +483,11 @@ h3 {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-large);
   box-shadow: var(--shadow-soft);
+}
+
+.about-copy {
+  display: grid;
+  gap: 14px;
 }
 
 .about-card p {
@@ -570,11 +587,17 @@ h3 {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: var(--radius-medium);
+  transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.contact-item:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(242, 220, 157, 0.34);
 }
 
 .contact-item-featured {
   align-items: center;
-  background: rgba(255, 255, 255, 0.12);
 }
 
 .contact-icon {
@@ -583,10 +606,10 @@ h3 {
   justify-content: center;
   width: 46px;
   height: 46px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: #f2dc9d;
+  background: rgba(242, 220, 157, 0.12);
+  border: 1px solid rgba(242, 220, 157, 0.22);
   border-radius: 16px;
-  font-size: 1.3rem;
 }
 
 .contact-item h3 {
@@ -599,27 +622,37 @@ h3 {
   margin-bottom: 8px;
 }
 
-.contact-button {
-  min-height: 46px;
-  padding-inline: 20px;
-}
-
 .contact-link {
   display: inline-flex;
   align-items: center;
-  min-height: 40px;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 16px;
   color: #f2dc9d;
+  background: rgba(242, 220, 157, 0.1);
+  border: 1px solid rgba(242, 220, 157, 0.2);
+  border-radius: 999px;
   font-weight: 800;
-  text-decoration: underline;
-  text-decoration-color: rgba(242, 220, 157, 0.35);
-  text-underline-offset: 5px;
   overflow-wrap: anywhere;
-  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+  transition: color 0.2s ease, background 0.2s ease, border-color 0.2s ease;
 }
 
 .contact-link:hover {
   color: #ffffff;
-  text-decoration-color: #ffffff;
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.36);
+}
+
+.contact-action {
+  color: var(--color-primary-dark);
+  background: #f2dc9d;
+  border-color: #f2dc9d;
+}
+
+.contact-action:hover {
+  color: var(--color-primary-dark);
+  background: #ffffff;
+  border-color: #ffffff;
 }
 
 address {
@@ -709,11 +742,37 @@ address {
 
 @media (max-width: 640px) {
   .section-padding {
-    padding: 68px 0;
+    padding: 62px 0;
   }
 
   .hero {
-    padding-top: 78px;
+    padding-top: 72px;
+  }
+
+  h1 {
+    margin-bottom: 20px;
+    font-size: clamp(2.45rem, 14vw, 4rem);
+    line-height: 0.98;
+  }
+
+  h2 {
+    margin-bottom: 14px;
+    font-size: clamp(1.9rem, 10vw, 2.65rem);
+    line-height: 1.04;
+  }
+
+  .section-heading {
+    margin-bottom: 34px;
+  }
+
+  .hero-description {
+    margin-bottom: 26px;
+    font-size: 1.05rem;
+  }
+
+  .hero-grid,
+  .split-section {
+    gap: 34px;
   }
 
   .header-content {
@@ -734,7 +793,9 @@ address {
   }
 
   .contact-item {
-    grid-template-columns: 1fr;
+    grid-template-columns: auto 1fr;
+    gap: 14px;
+    padding: 16px;
   }
 
   .contact-icon {
@@ -755,7 +816,15 @@ address {
   .about-card,
   .contact-card,
   .service-card {
-    padding: 24px;
+    padding: 22px;
+  }
+
+  .service-card {
+    min-height: auto;
+  }
+
+  .card-icon {
+    margin-bottom: 20px;
   }
 
   .footer-content {
