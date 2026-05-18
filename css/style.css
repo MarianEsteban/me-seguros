@@ -36,6 +36,7 @@ html {
 
 body {
   margin: 0;
+  overflow-x: hidden;
   font-family: "Inter", Arial, sans-serif;
   color: var(--color-text);
   background: var(--color-bg);
@@ -106,6 +107,7 @@ textarea {
   max-width: none;
   max-height: none;
   object-fit: contain;
+  background: var(--color-primary);
   border-radius: 18px;
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.16);
 }
@@ -168,6 +170,7 @@ textarea {
   border: 1px solid transparent;
   font-weight: 800;
   letter-spacing: -0.01em;
+  text-align: center;
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
@@ -915,6 +918,10 @@ address {
 
 
 @media (max-width: 640px) {
+  .container,
+  .narrow-container {
+    width: min(100% - 24px, var(--container));
+  }
   .section-padding {
     padding: 62px 0;
   }
@@ -970,6 +977,10 @@ address {
     width: 100%;
   }
 
+  .hero-actions {
+    gap: 12px;
+  }
+
   .contact-item {
     grid-template-columns: auto 1fr;
     gap: 14px;
@@ -1019,5 +1030,15 @@ address {
   .footer-content {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 420px) {
+  .contact-item {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-icon {
+    margin-bottom: 2px;
   }
 }
