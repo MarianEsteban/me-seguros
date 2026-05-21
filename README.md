@@ -1,23 +1,23 @@
-# ME Seguros Landing Page
+# ME Seguros
 
-## 1. Nombre del proyecto
-**ME Seguros Landing Page**
+Landing page institucional de **ME Seguros** para presentar coberturas, explicar la propuesta de valor y facilitar consultas directas por WhatsApp.
 
-## 2. Descripción breve
-Este proyecto es una landing page simple para presentar los servicios de **ME Seguros**, mostrar información clave y facilitar el contacto con potenciales clientes.
+## Datos del proyecto
+- **Marca:** ME Seguros
+- **Asesor:** Mariano Esteban
+- **Matrícula:** N° 87555
+- **WhatsApp:** [5492291515617](https://wa.me/5492291515617)
+- **Email:** [mariano_esteban94@hotmail.com.ar](mailto:mariano_esteban94@hotmail.com.ar)
+- **Instagram:** [@mestebanseguros](https://www.instagram.com/mestebanseguros/)
+- **Ubicación:** Calle 20 N° 899, Miramar, Buenos Aires
+- **Sitio publicado:** https://marianesteban.github.io/me-seguros/
 
-## 3. Objetivo de la landing
-El objetivo principal es tener una página clara, rápida y profesional que:
-- presente a ME Seguros,
-- muestre los servicios de forma ordenada,
-- y ayude a convertir visitas en consultas.
+## Tecnologías
+- HTML
+- CSS
+- JavaScript
 
-## 4. Tecnologías utilizadas
-- **HTML**: estructura del contenido.
-- **CSS**: estilos visuales y diseño responsive.
-- **JavaScript**: interacciones básicas de la página.
-
-## 5. Estructura de carpetas
+## Estructura
 ```bash
 me-seguros/
 ├── index.html
@@ -30,35 +30,16 @@ me-seguros/
     └── img/
 ```
 
-## 6. Cómo abrir el proyecto localmente
-1. Descargá o cloná este repositorio.
-2. Abrí la carpeta en VS Code (o tu editor preferido).
-3. Hacé doble click en `index.html` **o** usá una extensión como *Live Server* para verlo en el navegador.
+## Uso local
+1. Clonar o descargar el repositorio.
+2. Abrir la carpeta en VS Code.
+3. Ejecutar con Live Server o abrir `index.html` en el navegador.
 
-## 7. Cómo se publica con GitHub Pages
-1. Subí los cambios a GitHub (branch principal, por ejemplo `main`).
-2. En el repositorio, andá a **Settings > Pages**.
-3. En **Source**, seleccioná:
-   - Branch: `main`
-   - Folder: `/ (root)`
-4. Guardá y esperá unos segundos.
-5. GitHub te va a mostrar la URL pública del sitio.
+## Publicación en GitHub Pages
+1. Subir cambios a la rama principal.
+2. Ir a **Settings > Pages**.
+3. Elegir **Deploy from a branch** con `main` y carpeta `/ (root)`.
+4. Guardar y esperar la publicación.
 
-## 8. Datos principales de contacto
-> Recomendación: completar o actualizar estos datos según la versión final de la landing.
-
-- Nombre: **Mariano**
-- Marca: **ME Seguros**
-- Canal principal: **WhatsApp / Teléfono**
-- Email: **(agregar email oficial)**
-- Ubicación: **(agregar ciudad/zona de atención)**
-
-## 9. Próximos pasos posibles
-- Agregar foto profesional de Mariano.
-- Sumar logos de compañías.
-- Agregar formulario de consulta.
-- Conectar dominio propio.
-- Seguir optimizando mobile.
-
----
-Este README está pensado como guía rápida para retomar el proyecto más adelante, especialmente si estás aprendiendo desarrollo web y usando Codex.
+## Nota de mantenimiento
+Si retomás el proyecto más adelante, primero revisá `index.html` (estructura y contenido), `css/style.css` (estilos) y `js/main.js` (interacciones del menú y FAQ).
