@@ -200,6 +200,14 @@ textarea {
   font-size: 0.9rem;
 }
 
+.wa-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  fill: currentColor;
+  flex: 0 0 auto;
+}
+
 /* Hero con gradientes sutiles y tarjeta flotante */
 .hero {
   position: relative;
