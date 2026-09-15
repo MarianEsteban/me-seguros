@@ -115,6 +115,7 @@ La revisión llevó a: jerarquía orientada a intención, CTA primario al formul
 - ID de Pixel, token CAPI, casillas de email, API key y dominio verificado de Resend.
 - Dominio definitivo; al tenerlo, actualizar canonical, OG, Schema y orígenes.
 - Foto profesional real de Mariano, si decide incorporarla. No se usó stock.
+- Optimización de `assets/img/logo-verde.png`: reducir sus dimensiones y peso, o generar una variante WebP/AVIF con fallback, en un PR separado que admita archivos binarios. Este cambio se pospone para que el PR correctivo actual conserve el recurso original sin modificaciones.
 - Horarios/canales formales de atención y plazo de conservación de leads.
 - Revisión del aviso de privacidad por Mariano y, de ser necesario, un profesional legal argentino. El texto actual es informativo y marca explícitamente lo pendiente; no reemplaza asesoramiento legal.
 - Definición operativa de estados posteriores (cotizado/cerrado). Para optimizar a ventas, conviene que un CRM envíe luego eventos offline con su propio `event_id`.
