@@ -1,369 +1,144 @@
-<!DOCTYPE html>
-<html lang="es">
+<!doctype html>
+<html lang="es-AR">
 <head>
-  <!-- Configuración básica del documento -->
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="ME Seguros - Mariano Esteban, asesor de seguros (Matrícula N° 87555) en Miramar. Cotizá seguros automotor, hogar, comercio, vida, accidentes personales y asistencia al viajero por WhatsApp.">
-  <meta name="theme-color" content="#1f3724">
-  <meta property="og:title" content="ME Seguros | Mariano Esteban - Asesor de Seguros">
-  <meta property="og:description" content="Cotizá seguros automotor, hogar, comercio, vida, accidentes personales y asistencia al viajero con asesoramiento personalizado.">
-  <meta property="og:url" content="https://marianesteban.github.io/me-seguros/">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Revisá tu seguro y compará coberturas con Mariano Esteban, Productor Asesor de Seguros, matrícula N.º 87555. Cotizá online o por WhatsApp.">
+  <meta name="theme-color" content="#243628">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://marianesteban.github.io/me-seguros/">
+  <meta property="og:locale" content="es_AR">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="assets/img/logo-verde.png">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="ME Seguros | Mariano Esteban - Asesor de Seguros">
-  <meta name="twitter:description" content="Cotizá seguros automotor, hogar, comercio, vida, accidentes personales y asistencia al viajero con asesoramiento personalizado.">
-  <meta name="twitter:image" content="assets/img/logo-verde.png">
-  <link rel="icon" type="image/png" href="assets/img/logo-verde.png">
+  <meta property="og:title" content="Cotizá tu seguro con asesoramiento claro | ME Seguros">
+  <meta property="og:description" content="Revisá tu seguro y compará opciones sin vueltas con Mariano Esteban, Productor Asesor de Seguros.">
+  <meta property="og:url" content="https://marianesteban.github.io/me-seguros/">
+  <meta property="og:image" content="https://marianesteban.github.io/me-seguros/assets/img/logo-verde.png">
+  <meta property="og:image:alt" content="Identidad visual de ME Seguros">
+  <meta name="twitter:card" content="summary">
+  <title>Cotizá tu seguro | ME Seguros · Mariano Esteban</title>
+  <link rel="icon" href="assets/img/logo-verde.png" type="image/png">
   <link rel="apple-touch-icon" href="assets/img/logo-verde.png">
-  <title>ME Seguros | Mariano Esteban - Asesor de Seguros · Matrícula N° 87555</title>
-
-  <!-- Tipografías y estilos principales -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <script type="application/ld+json">
+    {"@context":"https://schema.org","@type":"InsuranceAgency","name":"ME Seguros","url":"https://marianesteban.github.io/me-seguros/","telephone":"+54 9 2291 51-5617","address":{"@type":"PostalAddress","streetAddress":"Calle 20 N.º 899","addressLocality":"Miramar","addressRegion":"Buenos Aires","addressCountry":"AR"},"sameAs":["https://www.instagram.com/mestebanseguros/"]}
+  </script>
 </head>
 <body>
-  <!-- Header fijo: logo, navegación interna y acceso directo a WhatsApp -->
-  <header class="site-header" id="inicio">
-    <div class="container header-content">
-      <a class="brand" href="#inicio" aria-label="Ir al inicio de ME Seguros">
-        <img src="assets/img/logo-verde.png" alt="ME Seguros - Mariano Esteban" class="brand-logo" width="1024" height="1024" decoding="async" fetchpriority="high">
-        <span class="brand-fallback">ME Seguros</span>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#inicio" aria-label="ME Seguros, ir al inicio">
+        <img src="assets/img/logo-verde.png" width="64" height="64" alt="ME Seguros" fetchpriority="high">
+        <span><strong>ME Seguros</strong><small>Mariano Esteban · PAS</small></span>
       </a>
-
-      <button class="nav-toggle" type="button" aria-label="Abrir menú" aria-expanded="false" aria-controls="primary-navigation">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
-
-      <nav class="primary-nav" id="primary-navigation" aria-label="Navegación principal">
-        <a href="#servicios">Servicios</a>
-        <a href="#asesor">Asesor</a>
-        <a href="#nosotros">Nosotros</a>
-        <a href="#como-trabajamos">Cómo trabajamos</a>
-        <a href="#preguntas">FAQ</a>
-        <a href="#contacto">Contacto</a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="navigation"><span></span><span></span><span></span><span class="sr-only">Abrir menú</span></button>
+      <nav id="navigation" class="nav" aria-label="Navegación principal">
+        <a href="#coberturas">Coberturas</a><a href="#por-que">Por qué ME</a><a href="#preguntas">Preguntas</a><a href="#cotizar">Cotizar</a>
       </nav>
-
-      <a class="btn btn-small btn-primary header-cta" href="https://wa.me/5492291515617?text=Hola%20Mariano%2C%20quiero%20hacer%20una%20consulta%20sobre%20seguros.%20%C2%BFPod%C3%A9s%20asesorarme%3F" target="_blank" rel="noopener noreferrer">
-        <svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5a7.5 7.5 0 0 0-6.5 11.3L4.4 20l4.4-1.1A7.5 7.5 0 1 0 12 4.5zm0 1.8a5.7 5.7 0 0 1 4.9 8.6l-.2.3.7 2.5-2.6-.7-.3.2a5.7 5.7 0 0 1-8.2-5.1A5.7 5.7 0 0 1 12 6.3zm-2 2.4c-.2 0-.4.1-.5.3-.3.3-.8.9-.8 1.8s.7 1.9.8 2c.1.1 1.4 2.2 3.4 3 .5.2.8.3 1.1.4.4.1.8.1 1.1.1.3 0 .9-.3 1-.7.1-.4.1-.8.1-.9-.1-.1-.2-.2-.4-.3l-1-.5c-.2-.1-.4-.1-.5.1l-.3.4c-.1.1-.2.2-.4.1-.2-.1-.9-.3-1.6-1-.6-.5-1-1.2-1.1-1.4-.1-.2 0-.3.1-.4l.3-.3c.1-.1.2-.2.2-.3.1-.1 0-.2 0-.3l-.4-1c-.1-.2-.3-.3-.5-.3z"/></svg>Consultar por WhatsApp
-      </a>
+      <a class="button button-small button-outline header-action js-whatsapp" data-context="general" href="https://wa.me/5492291515617" target="_blank" rel="noopener noreferrer">WhatsApp</a>
     </div>
   </header>
 
-  <main>
-    <!-- Hero: propuesta de valor principal y llamada a la acción -->
-    <section class="hero section-padding">
+  <main id="contenido">
+    <section class="hero" id="inicio">
       <div class="container hero-grid">
-        <div class="hero-copy">
-          <p class="eyebrow">Mariano Esteban · Asesor de Seguros · Matrícula N° 87555</p>
-          <h1>Seguros claros, respaldo real y atención personalizada.</h1>
-          <p class="hero-description">
-            Protegé tu auto, hogar, comercio y proyectos con asesoramiento cercano antes, durante y después de contratar.
-          </p>
+        <div>
+          <p class="eyebrow">Asesoramiento personal para elegir con claridad</p>
+          <h1>Revisá tu seguro y compará opciones <em>sin vueltas.</em></h1>
+          <p class="hero-lead">Te ayudo a encontrar una cobertura acorde a lo que necesitás y a entender qué estás contratando.</p>
           <div class="hero-actions">
-            <a class="btn btn-primary" href="https://wa.me/5492291515617?text=Hola%20Mariano%2C%20quiero%20cotizar%20un%20seguro.%20%C2%BFQu%C3%A9%20datos%20necesit%C3%A1s%3F" target="_blank" rel="noopener noreferrer">
-              <svg class="wa-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4.5a7.5 7.5 0 0 0-6.5 11.3L4.4 20l4.4-1.1A7.5 7.5 0 1 0 12 4.5zm0 1.8a5.7 5.7 0 0 1 4.9 8.6l-.2.3.7 2.5-2.6-.7-.3.2a5.7 5.7 0 0 1-8.2-5.1A5.7 5.7 0 0 1 12 6.3zm-2 2.4c-.2 0-.4.1-.5.3-.3.3-.8.9-.8 1.8s.7 1.9.8 2c.1.1 1.4 2.2 3.4 3 .5.2.8.3 1.1.4.4.1.8.1 1.1.1.3 0 .9-.3 1-.7.1-.4.1-.8.1-.9-.1-.1-.2-.2-.4-.3l-1-.5c-.2-.1-.4-.1-.5.1l-.3.4c-.1.1-.2.2-.4.1-.2-.1-.9-.3-1.6-1-.6-.5-1-1.2-1.1-1.4-.1-.2 0-.3.1-.4l.3-.3c.1-.1.2-.2.2-.3.1-.1 0-.2 0-.3l-.4-1c-.1-.2-.3-.3-.5-.3z"/></svg>Cotizar por WhatsApp
-            </a>
-            <a class="btn btn-secondary" href="#servicios">Ver coberturas</a>
+            <a class="button button-primary js-view-form" href="#cotizar">Quiero cotizar</a>
+            <a class="button button-secondary js-whatsapp" data-context="general" href="https://wa.me/5492291515617" target="_blank" rel="noopener noreferrer">Consultar por WhatsApp</a>
           </div>
-          <div class="trust-row" aria-label="Beneficios destacados">
-            <span>Respuesta ágil</span>
-            <span>Asesoramiento humano</span>
-            <span>Opciones a medida</span>
-          </div>
-        </div>
-
-        <div class="hero-card" aria-label="Resumen de beneficios de ME Seguros">
-          <div class="hero-card-top">
-            <span class="status-dot"></span>
-            <span>Atención disponible por WhatsApp</span>
-          </div>
-          <h2>Tu tranquilidad empieza con una buena decisión.</h2>
-          <p>Analizamos tus necesidades, comparamos alternativas y te asesoramos para elegir una cobertura adecuada para cada etapa.</p>
-          <div class="metric-grid">
-            <div>
-              <strong>6+</strong>
-              <span>Ramos de cobertura</span>
-            </div>
-            <div>
-              <strong>1:1</strong>
-              <span>Acompañamiento directo</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Servicios: listado de seguros disponibles -->
-    <section class="services section-padding" id="servicios">
-      <div class="container">
-        <div class="section-heading">
-          <p class="eyebrow">Coberturas</p>
-          <h2>Seguros para cuidar lo que importa.</h2>
-          <p>Soluciones pensadas para personas, familias, profesionales y comercios.</p>
-        </div>
-
-        <div class="cards-grid">
-          <article class="service-card">
-            <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 12l1.6-4.2A3 3 0 0 1 9.4 6h5.2a3 3 0 0 1 2.8 1.8L19 12"/><path d="M4 12h16v5H4z"/><path d="M7 17v1.2"/><path d="M17 17v1.2"/><circle cx="7.5" cy="14.8" r="1"/><circle cx="16.5" cy="14.8" r="1"/></svg></span>
-            <h3>Seguro automotor</h3>
-            <p>Coberturas para autos y vehículos, con opciones según uso, presupuesto y nivel de protección.</p>
-            <a class="service-link" href="https://wa.me/5492291515617?text=Hola%20Mariano%2C%20quiero%20cotizar%20un%20seguro%20automotor.%20%C2%BFQu%C3%A9%20datos%20del%20veh%C3%ADculo%20necesit%C3%A1s%3F" target="_blank" rel="noopener noreferrer">Consultar automotor</a>
-          </article>
-          <article class="service-card">
-            <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 11.2L12 5l8 6.2"/><path d="M6.5 10.5V19h11v-8.5"/><path d="M10 19v-5h4v5"/></svg></span>
-            <h3>Seguro de hogar</h3>
-            <p>Protección para tu vivienda, pertenencias y responsabilidad familiar ante imprevistos cotidianos.</p>
-            <a class="service-link" href="https://wa.me/5492291515617?text=Hola%20Mariano%2C%20quiero%20cotizar%20un%20seguro%20de%20hogar.%20%C2%BFQu%C3%A9%20informaci%C3%B3n%20necesit%C3%A1s%3F" target="_blank" rel="noopener noreferrer">Consultar hogar</a>
-          </article>
-          <article class="service-card">
-            <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 10h14l-1.2-4H6.2L5 10z"/><path d="M6 10v9h12v-9"/><path d="M9 19v-5h6v5"/><path d="M5 10c.7 1.3 2.3 1.3 3 0 .7 1.3 2.3 1.3 3 0 .7 1.3 2.3 1.3 3 0 .7 1.3 2.3 1.3 3 0 .7 1.3 2.3 1.3 3 0"/></svg></span>
-            <h3>Seguro de comercio</h3>
-            <p>Respaldo para locales, oficinas y actividades comerciales frente a daños, robos y riesgos operativos.</p>
-            <a class="service-link" href="https://wa.me/5492291515617?text=Hola%20Mariano%2C%20quiero%20cotizar%20un%20seguro%20de%20comercio.%20%C2%BFQu%C3%A9%20datos%20necesit%C3%A1s%3F" target="_blank" rel="noopener noreferrer">Consultar comercio</a>
-          </article>
-          <article class="service-card">
-            <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4l7 2.5v5.2c0 4.4-2.8 7-7 8.3-4.2-1.3-7-3.9-7-8.3V6.5L12 4z"/><path d="M9 12l2 2 4-4"/></svg></span>
-            <h3>Seguro de vida</h3>
-            <p>Planes para acompañar a quienes más querés y planificar protección económica a largo plazo.</p>
-            <a class="service-link" href="https://wa.me/5492291515617?text=Hola%20Mariano%2C%20quiero%20cotizar%20un%20seguro%20de%20vida.%20%C2%BFPod%C3%A9s%20orientarme%3F" target="_blank" rel="noopener noreferrer">Consultar vida</a>
-          </article>
-          <article class="service-card">
-            <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 4v16"/><path d="M4 12h16"/><path d="M7 7l10 10"/><path d="M17 7L7 17"/></svg></span>
-            <h3>Accidentes personales</h3>
-            <p>Cobertura ante accidentes para trabajadores independientes, equipos y actividades específicas.</p>
-            <a class="service-link" href="https://wa.me/5492291515617?text=Hola%20Mariano%2C%20quiero%20cotizar%20un%20seguro%20de%20accidentes%20personales.%20%C2%BFQu%C3%A9%20datos%20necesit%C3%A1s%3F" target="_blank" rel="noopener noreferrer">Consultar accidentes</a>
-          </article>
-          <article class="service-card">
-            <span class="card-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3.8 11.2l16.4-6.1-5.9 16.5-3.1-7-7.4-3.4z"/><path d="M11.2 14.6l4-4"/></svg></span>
-            <h3>Asistencia al viajero</h3>
-            <p>Viajá con respaldo médico y asistencia para resolver emergencias lejos de casa.</p>
-            <a class="service-link" href="https://wa.me/5492291515617?text=Hola%20Mariano%2C%20quiero%20cotizar%20asistencia%20al%20viajero.%20%C2%BFQu%C3%A9%20datos%20del%20viaje%20necesit%C3%A1s%3F" target="_blank" rel="noopener noreferrer">Consultar viaje</a>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <!-- Diferencial: explica por qué conviene contratar con asesor -->
-    <section class="advisor section-padding" id="asesor">
-      <div class="container split-section">
-        <div class="section-heading align-left">
-          <p class="eyebrow">Asesoramiento profesional</p>
-          <h2>Por qué contratar con un asesor.</h2>
-          <p>Un seguro no debería elegirse solo por precio. También importa entender qué cubre, qué excluye y cómo actuar cuando lo necesitás.</p>
-        </div>
-
-        <div class="benefits-list">
-          <div class="benefit-item">
-            <span>01</span>
-            <div>
-              <h3>Te asesoramos para comparar opciones</h3>
-              <p>Revisamos alternativas de cobertura para encontrar una solución equilibrada entre protección y costo.</p>
-            </div>
-          </div>
-          <div class="benefit-item">
-            <span>02</span>
-            <div>
-              <h3>Tenés acompañamiento real</h3>
-              <p>Ante dudas, cambios o siniestros, contás con una persona que conoce tu caso y puede orientarte.</p>
-            </div>
-          </div>
-          <div class="benefit-item">
-            <span>03</span>
-            <div>
-              <h3>Contratás con más claridad</h3>
-              <p>Te explicamos condiciones, alcances y requisitos para que tomes decisiones con información simple.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Nosotros: combina presencia de marca y asesoramiento personal -->
-    <section class="about section-padding" id="nosotros">
-      <div class="container about-card">
-        <div class="about-intro">
-          <p class="eyebrow">Nosotros</p>
-          <h2>ME Seguros: asesoramiento directo de Mariano Esteban.</h2>
-          <div class="about-signature" aria-label="Presencia personal de Mariano Esteban">
-            <span>ME</span>
-            <div>
-              <strong>Mariano Esteban</strong>
-              <small>Asesor de seguros · Matrícula N° 87555</small>
-            </div>
-          </div>
-        </div>
-        <div class="about-copy">
-          <p>
-            ME Seguros combina una gestión ordenada, profesional y orientada a resultados con el trato directo de Mariano Esteban. La idea es que no sientas que hablás con una plataforma: tenés una persona que escucha, analiza tu caso y te acompaña para decidir mejor.
-          </p>
-          <p>
-            Relevamos la información necesaria, comparamos alternativas y sostenemos un seguimiento claro en cada etapa. Así, cada persona, familia, profesional o comercio recibe una recomendación simple, honesta y alineada a lo que realmente necesita proteger.
-          </p>
-          <ul class="about-points" aria-label="Diferenciales de ME Seguros">
-            <li>Atención personalizada y seguimiento 1:1.</li>
-            <li>Criterio profesional para comparar coberturas.</li>
-            <li>Comunicación clara antes, durante y después de contratar.</li>
+          <ul class="trust-list" aria-label="Señales de confianza">
+            <li>Atención directa</li><li>Opciones explicadas con claridad</li><li>Acompañamiento después de contratar</li>
           </ul>
         </div>
+        <aside class="advisor-card" aria-label="Datos del asesor">
+          <div class="advisor-mark">ME</div>
+          <p class="advisor-label">Tu consulta la recibe</p>
+          <h2>Mariano Esteban</h2>
+          <p>Productor Asesor de Seguros</p>
+          <p class="registration">Matrícula N.º 87555</p>
+          <hr>
+          <p class="advisor-note">Una persona que escucha tu necesidad, compara alternativas disponibles y te acompaña en cada paso.</p>
+        </aside>
       </div>
     </section>
 
-    <!-- Proceso: pasos simples de trabajo -->
-    <section class="process section-padding" id="como-trabajamos">
+    <section class="quick-quote" aria-label="Acceso rápido a cotización">
+      <div class="container quick-inner"><p><strong>¿Ya sabés qué querés asegurar?</strong> Empezá en menos de 2 minutos.</p><a class="text-link js-view-form" href="#cotizar">Completar datos <span aria-hidden="true">→</span></a></div>
+    </section>
+
+    <section class="section" id="coberturas">
       <div class="container">
-        <div class="section-heading">
-          <p class="eyebrow">Cómo trabajamos</p>
-          <h2>Un proceso simple para contratar con claridad.</h2>
-          <p>Ordenamos cada consulta en pasos concretos para que sepas qué información necesitamos, qué opciones existen y cómo avanzar sin vueltas.</p>
-        </div>
-
-        <div class="process-steps" aria-label="Pasos de trabajo de ME Seguros">
-          <article class="process-step">
-            <span>01</span>
-            <h3>Nos contás qué necesitás asegurar.</h3>
-            <p>Te orientamos sobre qué información hace falta según el tipo de cobertura.</p>
-          </article>
-          <article class="process-step">
-            <span>02</span>
-            <h3>Relevamos los datos necesarios.</h3>
-            <p>Ordenamos los datos clave para poder comparar alternativas de forma correcta.</p>
-          </article>
-          <article class="process-step">
-            <span>03</span>
-            <h3>Comparamos alternativas disponibles.</h3>
-            <p>Buscamos opciones que se ajusten a tu necesidad, presupuesto y perfil de riesgo.</p>
-          </article>
-          <article class="process-step">
-            <span>04</span>
-            <h3>Te explicamos la propuesta con claridad.</h3>
-            <p>Revisamos coberturas, límites y condiciones para que sepas qué estás contratando.</p>
-          </article>
-          <article class="process-step">
-            <span>05</span>
-            <h3>Te acompañamos en la contratación y durante la vigencia.</h3>
-            <p>Seguimos disponibles para consultas, renovaciones o cualquier gestión que necesites.</p>
-          </article>
+        <div class="section-heading"><p class="eyebrow">Qué podés asegurar</p><h2>Coberturas para cada etapa.</h2><p>Elegí una opción para consultar con un mensaje específico.</p></div>
+        <div class="coverage-grid">
+          <article class="coverage-card featured"><span class="coverage-icon" aria-hidden="true">⌁</span><h3>Automotor</h3><p>Opciones según tu vehículo, uso y nivel de cobertura que necesitás.</p><div><a href="#cotizar" class="card-link js-quote-type" data-type="automotor">Cotizar online</a><a class="card-link js-whatsapp" data-context="automotor" href="https://wa.me/5492291515617" target="_blank" rel="noopener noreferrer">WhatsApp</a></div></article>
+          <article class="coverage-card"><span class="coverage-icon" aria-hidden="true">⌂</span><h3>Hogar</h3><p>Protección para tu vivienda, bienes y responsabilidad familiar.</p><a class="card-link js-whatsapp" data-context="hogar" href="https://wa.me/5492291515617" target="_blank" rel="noopener noreferrer">Consultar hogar →</a></article>
+          <article class="coverage-card"><span class="coverage-icon" aria-hidden="true">▦</span><h3>Comercio</h3><p>Coberturas para el patrimonio y la actividad de tu negocio.</p><a class="card-link js-whatsapp" data-context="comercio" href="https://wa.me/5492291515617" target="_blank" rel="noopener noreferrer">Consultar comercio →</a></article>
+          <article class="coverage-card"><span class="coverage-icon" aria-hidden="true">♡</span><h3>Vida</h3><p>Alternativas para planificar el respaldo económico de quienes querés.</p><a class="card-link js-whatsapp" data-context="vida" href="https://wa.me/5492291515617" target="_blank" rel="noopener noreferrer">Consultar vida →</a></article>
+          <article class="coverage-card"><span class="coverage-icon" aria-hidden="true">✚</span><h3>Accidentes personales</h3><p>Para trabajadores independientes, equipos y actividades específicas.</p><a class="card-link js-whatsapp" data-context="accidentes" href="https://wa.me/5492291515617" target="_blank" rel="noopener noreferrer">Consultar accidentes →</a></article>
+          <article class="coverage-card"><span class="coverage-icon" aria-hidden="true">✈</span><h3>Asistencia al viajero</h3><p>Asistencia ante imprevistos durante viajes nacionales o al exterior.</p><a class="card-link js-whatsapp" data-context="viajero" href="https://wa.me/5492291515617" target="_blank" rel="noopener noreferrer">Consultar asistencia →</a></article>
         </div>
       </div>
     </section>
 
-    <!-- Preguntas frecuentes: acordeón controlado con JavaScript simple -->
-    <section class="faq section-padding" id="preguntas">
-      <div class="container narrow-container">
-        <div class="section-heading">
-          <p class="eyebrow">Preguntas frecuentes</p>
-          <h2>Dudas habituales antes de cotizar.</h2>
-        </div>
+    <section class="section benefits" id="por-que">
+      <div class="container benefits-grid">
+        <div class="section-heading"><p class="eyebrow">Por qué trabajar con un PAS</p><h2>No se trata solo de recibir un precio.</h2><p>Se trata de saber qué estás contratando y contar con alguien cuando lo necesites.</p></div>
+        <ol class="benefit-list">
+          <li><span>01</span><div><h3>Comparás con criterio</h3><p>Revisamos alternativas disponibles según tu necesidad, sin promesas de ahorro que no puedan garantizarse.</p></div></li>
+          <li><span>02</span><div><h3>Entendés la cobertura</h3><p>Te explico alcances, condiciones y puntos importantes en lenguaje simple.</p></div></li>
+          <li><span>03</span><div><h3>Tenés acompañamiento</h3><p>Seguís en contacto directo para consultas, renovaciones y orientación ante un siniestro.</p></div></li>
+        </ol>
+      </div>
+    </section>
 
-        <div class="faq-list">
-          <article class="faq-item">
-            <button class="faq-question" type="button" aria-expanded="false">
-              ¿Puedo pedir una cotización por WhatsApp?
-              <span>+</span>
-            </button>
-            <div class="faq-answer">
-              <p>Sí. Escribinos por WhatsApp y te vamos a pedir los datos necesarios para preparar una propuesta según el tipo de seguro.</p>
+    <section class="section process">
+      <div class="container"><div class="section-heading centered"><p class="eyebrow">Cómo funciona</p><h2>De la consulta a tu cobertura.</h2></div><ol class="steps"><li><span>1</span><h3>Contame qué necesitás</h3><p>Completá el formulario breve o escribime.</p></li><li><span>2</span><h3>Analizo alternativas</h3><p>Relevo los datos necesarios y comparo opciones disponibles.</p></li><li><span>3</span><h3>Elegís con claridad</h3><p>Te explico la propuesta y te acompaño para avanzar.</p></li></ol></div>
+    </section>
+
+    <section class="section quote-section" id="cotizar">
+      <div class="container quote-grid">
+        <div class="quote-copy"><p class="eyebrow">Empezá tu cotización</p><h2>Dejame los datos iniciales.</h2><p>Son suficientes para entender tu consulta. Mariano te contactará para solicitar únicamente la información adicional necesaria.</p><div class="privacy-summary"><strong>Tus datos, con un propósito claro</strong><p>Se usan para responder tu consulta, gestionar la cotización y medir el origen de la campaña. No se publican ni se venden.</p></div></div>
+        <div class="form-card">
+          <form id="lead-form" novalidate>
+            <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+            <div class="field-row">
+              <div class="field"><label for="name">Nombre y apellido</label><input id="name" name="name" autocomplete="name" required minlength="2" maxlength="80" placeholder="Ej.: María López"><small class="error" id="name-error"></small></div>
+              <div class="field"><label for="phone">WhatsApp</label><input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required minlength="8" maxlength="25" placeholder="Ej.: 2291 123456"><small class="error" id="phone-error"></small></div>
             </div>
-          </article>
-          <article class="faq-item">
-            <button class="faq-question" type="button" aria-expanded="false">
-              ¿Qué datos necesito para cotizar?
-              <span>+</span>
-            </button>
-            <div class="faq-answer">
-              <p>Depende de la cobertura. Por ejemplo, para automotor suelen solicitarse datos del vehículo y del titular; para hogar o comercio, ubicación y características del inmueble.</p>
+            <div class="field-row">
+              <div class="field"><label for="location">Localidad</label><input id="location" name="location" autocomplete="address-level2" required minlength="2" maxlength="80" placeholder="Tu localidad"><small class="error" id="location-error"></small></div>
+              <div class="field"><label for="inquiryType">Tipo de consulta</label><select id="inquiryType" name="inquiryType" required><option value="">Seleccioná una opción</option><option value="automotor">Automotor</option><option value="hogar">Hogar</option><option value="comercio">Comercio</option><option value="vida">Vida</option><option value="accidentes">Accidentes personales</option><option value="viajero">Asistencia al viajero</option><option value="general">Consulta general</option></select><small class="error" id="inquiryType-error"></small></div>
             </div>
-          </article>
-          <article class="faq-item">
-            <button class="faq-question" type="button" aria-expanded="false">
-              ¿Me acompañan si tengo un siniestro?
-              <span>+</span>
-            </button>
-            <div class="faq-answer">
-              <p>Sí. La idea es que tengas orientación para saber cómo avanzar, qué documentación reunir y cuáles son los pasos habituales.</p>
-            </div>
-          </article>
-          <article class="faq-item">
-            <button class="faq-question" type="button" aria-expanded="false">
-              ¿La consulta inicial tiene costo?
-              <span>+</span>
-            </button>
-            <div class="faq-answer">
-              <p>No. Podés consultar y cotizar sin compromiso para evaluar opciones antes de contratar.</p>
-            </div>
-          </article>
+            <fieldset class="vehicle-fields" id="vehicle-fields"><legend>Datos iniciales del vehículo</legend><div class="field-row"><div class="field"><label for="vehicle">Vehículo <span>(marca y modelo)</span></label><input id="vehicle" name="vehicle" maxlength="100" placeholder="Ej.: Volkswagen Gol"><small class="error" id="vehicle-error"></small></div><div class="field"><label for="year">Año</label><input id="year" name="year" type="number" inputmode="numeric" min="1950" max="2027" placeholder="Ej.: 2021"><small class="error" id="year-error"></small></div></div></fieldset>
+            <label class="consent"><input type="checkbox" name="consent" required><span>Acepto que ME Seguros use estos datos para contactarme y gestionar mi consulta, según el <button type="button" class="link-button" data-modal-open>aviso de privacidad</button>.</span></label><small class="error" id="consent-error"></small>
+            <div class="honeypot" aria-hidden="true"><label for="company">Empresa</label><input id="company" name="company" tabindex="-1" autocomplete="off"></div>
+            <button class="button button-primary submit-button" type="submit">Solicitar cotización</button>
+            <p class="form-note">Enviar el formulario no implica contratar un seguro ni garantiza una condición comercial.</p>
+          </form>
+          <div class="success-panel" id="success-panel" hidden tabindex="-1"><span aria-hidden="true">✓</span><h3>Recibimos tu consulta</h3><p>Mariano va a contactarte por WhatsApp para continuar.</p><a class="button button-primary js-whatsapp" data-context="lead-followup" href="https://wa.me/5492291515617" target="_blank" rel="noopener noreferrer">Continuar por WhatsApp</a><button class="link-button" id="new-inquiry" type="button">Enviar otra consulta</button></div>
         </div>
       </div>
     </section>
 
-    <!-- Contacto final: cierre enfocado en conversión y datos claros -->
-    <section class="contact section-padding" id="contacto">
-      <div class="container contact-card">
-        <div class="contact-copy">
-          <p class="eyebrow">Contacto</p>
-          <h2>Hablemos de tu seguro</h2>
-          <p>Escribinos por WhatsApp para una respuesta ágil o usá el canal que prefieras para coordinar una reunión con Mariano Esteban, asesor de seguros · Matrícula N° 87555.</p>
-        </div>
+    <section class="section faq" id="preguntas"><div class="container narrow"><div class="section-heading centered"><p class="eyebrow">Preguntas frecuentes</p><h2>Antes de consultar.</h2></div><div class="faq-list">
+      <details><summary>¿La cotización tiene costo?</summary><p>No. La consulta y el análisis inicial de opciones no tienen costo ni te obligan a contratar.</p></details>
+      <details><summary>¿Qué datos necesito para cotizar un auto?</summary><p>Para empezar, nombre, WhatsApp, localidad, marca/modelo y año. Mariano te pedirá luego los datos adicionales que correspondan.</p></details>
+      <details><summary>¿Puedo revisar una cobertura que ya tengo?</summary><p>Sí. Podés consultar para entender tu cobertura actual y evaluar otras alternativas disponibles.</p></details>
+      <details><summary>¿Quién responde mi consulta?</summary><p>Mariano Esteban, Productor Asesor de Seguros, matrícula N.º 87555.</p></details>
+    </div></div></section>
 
-        <div class="contact-details" aria-label="Datos de contacto de ME Seguros">
-          <article class="contact-item contact-item-featured">
-            <span class="contact-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 18.5l1-3.1A7.2 7.2 0 1 1 8.6 18L5 18.5z"/><path d="M9 10.2c.5 2 2.1 3.4 4.1 3.9l1.1-1.1 1.8.6c.3.1.5.4.5.7v1c0 .4-.3.7-.7.7-4.2 0-7.8-3.5-7.8-7.8 0-.4.3-.7.7-.7h1c.3 0 .6.2.7.5l.6 1.8-1 1.1z"/></svg></span>
-            <div>
-              <h3>WhatsApp</h3>
-              <a class="contact-link contact-action" href="https://wa.me/5492291515617?text=Hola%20Mariano%2C%20quiero%20hacer%20una%20consulta%20sobre%20seguros.%20%C2%BFPod%C3%A9s%20asesorarme%3F" target="_blank" rel="noopener noreferrer">
-                Consultar ahora
-              </a>
-            </div>
-          </article>
-
-          <article class="contact-item">
-            <span class="contact-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21s6-5.2 6-10a6 6 0 0 0-12 0c0 4.8 6 10 6 10z"/><circle cx="12" cy="11" r="2"/></svg></span>
-            <div>
-              <h3>Oficina</h3>
-              <address>Calle 20 N° 899, Miramar, Buenos Aires.</address>
-              <a class="contact-link" href="https://www.google.com/maps/search/?api=1&amp;query=Calle%2020%20899%20Miramar%20Buenos%20Aires%20Argentina" target="_blank" rel="noopener noreferrer">
-                Ver ubicación en Google Maps
-              </a>
-            </div>
-          </article>
-
-          <article class="contact-item">
-            <span class="contact-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="4"/><circle cx="12" cy="12" r="3"/><path d="M16.5 7.8h.01"/></svg></span>
-            <div>
-              <h3>Instagram</h3>
-              <a class="contact-link" href="https://www.instagram.com/mestebanseguros/" target="_blank" rel="noopener noreferrer">@mestebanseguros</a>
-            </div>
-          </article>
-
-          <article class="contact-item">
-            <span class="contact-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 7h14v10H5z"/><path d="M5 8l7 5 7-5"/></svg></span>
-            <div>
-              <h3>Email</h3>
-              <a class="contact-link" href="mailto:mariano_esteban94@hotmail.com.ar?subject=Consulta%20desde%20ME%20Seguros&amp;body=Hola%20Mariano%2C%20quiero%20hacer%20una%20consulta%20sobre%20seguros.%20%C2%BFPod%C3%A9s%20asesorarme%3F">mariano_esteban94@hotmail.com.ar</a>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
+    <section class="final-cta"><div class="container"><p class="eyebrow">Hablemos</p><h2>¿Preferís resolverlo por WhatsApp?</h2><p>Contame qué necesitás asegurar y coordinamos los próximos pasos.</p><a class="button button-light js-whatsapp" data-context="general" href="https://wa.me/5492291515617" target="_blank" rel="noopener noreferrer">Escribirle a Mariano</a></div></section>
   </main>
 
-  <!-- Footer simple con logo y datos esenciales -->
-  <footer class="site-footer">
-    <div class="container footer-content">
-      <a class="brand" href="#inicio" aria-label="Volver al inicio de ME Seguros">
-        <img src="assets/img/logo-verde.png" alt="ME Seguros - Mariano Esteban" class="brand-logo" width="1024" height="1024" decoding="async" loading="lazy">
-        <span class="brand-fallback">ME Seguros</span>
-      </a>
-      <p>© <span id="current-year"></span> ME Seguros · Mariano Esteban · Asesor de Seguros · Matrícula N° 87555.</p>
-    </div>
-  </footer>
+  <footer class="site-footer"><div class="container footer-grid"><div><strong>ME Seguros</strong><p>Mariano Esteban · Productor Asesor de Seguros<br>Matrícula N.º 87555</p></div><div><a href="https://www.instagram.com/mestebanseguros/" target="_blank" rel="noopener noreferrer">@mestebanseguros</a><a href="https://wa.me/5492291515617" class="js-whatsapp" data-context="general" target="_blank" rel="noopener noreferrer">WhatsApp</a><button type="button" class="footer-button" data-modal-open>Privacidad</button></div><p>© <span id="current-year"></span> ME Seguros</p></div></footer>
+  <div class="mobile-cta" aria-label="Acciones rápidas"><a class="button button-primary js-view-form" href="#cotizar">Cotizar</a><a class="button button-secondary js-whatsapp" data-context="general" href="https://wa.me/5492291515617" target="_blank" rel="noopener noreferrer">WhatsApp</a></div>
 
-  <script src="js/main.js"></script>
+  <dialog id="privacy-dialog" aria-labelledby="privacy-title"><div class="modal-head"><h2 id="privacy-title">Aviso de privacidad</h2><button type="button" data-modal-close aria-label="Cerrar aviso">×</button></div><div class="modal-copy"><p><strong>Responsable:</strong> Mariano Esteban / ME Seguros, Productor Asesor de Seguros, matrícula N.º 87555.</p><p>Los datos del formulario se usan para responder la consulta, preparar o gestionar una cotización y registrar su origen comercial. También pueden procesarse identificadores técnicos y parámetros de campaña para medición publicitaria, cuando la configuración de analítica esté habilitada.</p><p>Los datos pueden ser tratados por proveedores necesarios para la operación —alojamiento, correo y Meta— bajo sus propias condiciones. Podés pedir acceso, corrección o eliminación escribiendo por WhatsApp.</p><p><strong>Pendiente antes de producción:</strong> Mariano debe validar este aviso, definir plazos de conservación y completar un canal formal para ejercer derechos según la normativa aplicable.</p></div></dialog>
+  <script src="js/config.js"></script>
+  <script src="js/main.js" defer></script>
 </body>
 </html>
