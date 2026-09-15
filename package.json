@@ -1,0 +1,7 @@
+{
+  "name": "me-seguros-landing",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": { "test": "node --test", "check": "node --check js/main.js && node --check js/config.js && node --check api/lead.js" },
+  "engines": { "node": ">=20" }
+}
