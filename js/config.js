@@ -3,7 +3,7 @@
  * En GitHub Pages, API_BASE_URL debe apuntar al despliegue Vercel (sin barra final).
  */
 window.ME_CONFIG = Object.freeze({
-  META_PIXEL_ID: "",
+  META_PIXEL_ID: "", // Completar únicamente con el ID numérico validado del despliegue.
   API_BASE_URL: "",
   META_TEST_EVENT_CODE: ""
 });

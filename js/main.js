@@ -22,14 +22,17 @@
   const uuid = () => globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
   const getCookie = (name) => document.cookie.split("; ").find((item) => item.startsWith(`${name}=`))?.split("=").slice(1).join("=") || "";
 
-  function captureAttribution() {
+  function readAttribution() {
     const params = new URLSearchParams(location.search);
     const stored = JSON.parse(safeStorage.get("me_attribution") || "{}");
     ATTRIBUTION_KEYS.forEach((key) => { if (params.get(key)) stored[key] = params.get(key).slice(0, 250); });
     stored.landing_page ||= location.href;
     stored.first_seen_at ||= new Date().toISOString();
-    safeStorage.set("me_attribution", JSON.stringify(stored));
     return stored;
+  }
+
+  function persistAttribution(attribution) {
+    safeStorage.set("me_attribution", JSON.stringify(attribution));
   }
 
   function initPixel() {
@@ -49,18 +52,28 @@
     else window.fbq("track", name, parameters);
   }
 
-  const attribution = captureAttribution();
-  initPixel();
+  // La atribución se mantiene en memoria hasta que la persona acepta el tratamiento
+  // al enviar el formulario. No se escriben identificadores publicitarios antes.
+  const attribution = readAttribution();
   document.querySelector("#current-year").textContent = new Date().getFullYear();
 
   const navToggle = document.querySelector(".nav-toggle");
   const nav = document.querySelector(".nav");
-  navToggle?.addEventListener("click", () => {
-    const open = nav.classList.toggle("open");
+  function setMenuOpen(open, returnFocus = false) {
+    nav.classList.toggle("open", open);
     navToggle.setAttribute("aria-expanded", String(open));
+    navToggle.querySelector(".sr-only").textContent = open ? "Cerrar menú" : "Abrir menú";
     document.body.classList.toggle("menu-open", open);
+    if (returnFocus) navToggle.focus();
+  }
+  navToggle?.addEventListener("click", () => {
+    const open = !nav.classList.contains("open");
+    setMenuOpen(open);
   });
-  nav?.addEventListener("click", (event) => { if (event.target.matches("a")) { nav.classList.remove("open"); navToggle.setAttribute("aria-expanded", "false"); document.body.classList.remove("menu-open"); } });
+  nav?.addEventListener("click", (event) => { if (event.target.matches("a")) setMenuOpen(false); });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && nav.classList.contains("open")) setMenuOpen(false, true);
+  });
 
   document.querySelectorAll(".js-whatsapp").forEach((link) => {
     const context = link.dataset.context || "general";
@@ -116,6 +129,8 @@
       formStatus.textContent = "El formulario todavía no está conectado al servidor. Podés continuar por WhatsApp.";
       formStatus.classList.add("visible"); return;
     }
+    persistAttribution(attribution);
+    initPixel();
     const submit = form.querySelector("[type=submit]"); submit.disabled = true; submit.textContent = "Enviando…";
     const data = Object.fromEntries(new FormData(form));
     const eventId = uuid();

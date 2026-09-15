@@ -8,15 +8,15 @@ Landing mobile-first para el funnel **Meta Ads → landing → lead/WhatsApp →
 - Coberturas con mensajes de WhatsApp específicos para automotor, hogar, comercio, vida, accidentes personales, asistencia al viajero y consulta general.
 - Formulario breve tradicional (mejor que uno progresivo para solo seis datos): vehículo y año aparecen únicamente en automotor.
 - Entrega real del lead por email mediante Resend. **El frontend solo confirma si el servidor confirma la entrega**; sin backend configurado muestra un error y ofrece WhatsApp.
-- Persistencia local de UTM y `fbclid`, y asociación de atribución al email y al evento server-side.
+- Persistencia local de UTM y `fbclid` únicamente después de que la persona acepta el tratamiento al enviar el formulario, y asociación de atribución al email y al evento server-side.
 - Meta Pixel configurable y endpoint Vercel para Conversions API (CAPI), sin secretos en el navegador.
-- Consentimiento, aviso de privacidad preliminar, honeypot, validación cliente/servidor, semántica y navegación accesible.
+- Consentimiento, aviso de privacidad, honeypot, validación cliente/servidor, semántica y navegación accesible.
 
 ## Arquitectura
 
 El HTML/CSS/JS sigue siendo la opción más simple y rápida: no hace falta un framework para esta landing. GitHub Pages sirve el frontend y una Vercel Function recibe `POST /api/lead`.
 
-1. El navegador conserva los parámetros de primera atribución en `localStorage` y obtiene `_fbp`/`_fbc` si existen.
+1. El navegador mantiene la atribución de la visita en memoria. Solo al aceptar y enviar el formulario la conserva en `localStorage`, inicia el Pixel configurado y obtiene `_fbp`/`_fbc` si existen; antes del consentimiento no almacena identificadores publicitarios.
 2. Al enviar, genera un `event_id` único y manda datos, atribución e identificadores permitidos a Vercel.
 3. La función valida los datos y entrega el lead por Resend.
 4. Solo después de esa entrega envía `Lead` a CAPI. Normaliza y hashea con SHA-256 teléfono, nombre, apellido, localidad y país **en servidor**.
@@ -40,7 +40,7 @@ Editar `js/config.js`:
 
 ```js
 window.ME_CONFIG = Object.freeze({
-  META_PIXEL_ID: "PIXEL_ID_REAL",
+  META_PIXEL_ID: "", // Completar en el despliegue con el ID numérico validado.
   API_BASE_URL: "https://tu-proyecto.vercel.app",
   META_TEST_EVENT_CODE: ""
 });
@@ -116,7 +116,7 @@ La revisión llevó a: jerarquía orientada a intención, CTA primario al formul
 - Dominio definitivo; al tenerlo, actualizar canonical, OG, Schema y orígenes.
 - Foto profesional real de Mariano, si decide incorporarla. No se usó stock.
 - Horarios/canales formales de atención y plazo de conservación de leads.
-- Revisión del aviso de privacidad por Mariano y, de ser necesario, un profesional legal argentino. El texto actual es informativo y marca explícitamente lo pendiente; no reemplaza asesoramiento legal.
+- Validación por Mariano —y, de ser necesario, por un profesional legal argentino— del aviso de privacidad, el plazo operativo de conservación y el canal formal para ejercer derechos. El texto público es informativo y no reemplaza asesoramiento legal.
 - Definición operativa de estados posteriores (cotizado/cerrado). Para optimizar a ventas, conviene que un CRM envíe luego eventos offline con su propio `event_id`.
 
 ## Checklist antes de lanzar campañas
