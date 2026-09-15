@@ -14,7 +14,7 @@ Landing mobile-first para el funnel **Meta Ads → landing → lead/WhatsApp →
 
 ## Arquitectura
 
-El HTML/CSS/JS sigue siendo la opción más simple y rápida: no hace falta un framework para esta landing. GitHub Pages sirve el frontend y una Vercel Function recibe `POST /api/lead`.
+El HTML/CSS/JS sigue siendo la opción más simple y rápida: no hace falta un framework para esta landing. Vercel sirve el frontend y la Function `POST /api/lead` desde el mismo origen.
 
 1. El navegador conserva los parámetros de primera atribución en `localStorage` y obtiene `_fbp`/`_fbc` si existen.
 2. Al enviar, genera un `event_id` único y manda datos, atribución e identificadores permitidos a Vercel.
@@ -41,12 +41,11 @@ Editar `js/config.js`:
 ```js
 window.ME_CONFIG = Object.freeze({
   META_PIXEL_ID: "PIXEL_ID_REAL",
-  API_BASE_URL: "https://tu-proyecto.vercel.app",
   META_TEST_EVENT_CODE: ""
 });
 ```
 
-`META_PIXEL_ID` no es secreto. `API_BASE_URL` puede quedar vacío si frontend y API se sirven en el mismo despliegue de Vercel. No agregar tokens a este archivo.
+`META_PIXEL_ID` no es secreto. El frontend siempre usa `/api/lead` en el mismo origen; no agregar tokens a este archivo.
 
 ## Variables secretas en Vercel
 
@@ -56,7 +55,8 @@ Copiar `.env.example` en la configuración del proyecto, no en Git:
 - `LEAD_TO_EMAIL`: casilla real donde Mariano recibirá leads.
 - `LEAD_FROM_EMAIL`: remitente de un dominio validado en Resend.
 - `LEAD_REPLY_TO`: casilla de respuesta (opcional).
-- `ALLOWED_ORIGINS`: orígenes exactos separados por coma, por ejemplo `https://marianesteban.github.io,https://www.meseguros.com.ar`. Un origin no lleva ruta.
+- `ALLOWED_ORIGINS`: orígenes exactos de Vercel/dominio propio separados por coma. Un origin no lleva ruta.
+- `KV_REST_API_URL` y `KV_REST_API_TOKEN`: Redis de Vercel/Upstash para rate limiting e idempotencia distribuida.
 - `META_PIXEL_ID`: ID real del dataset/píxel.
 - `META_ACCESS_TOKEN`: token de CAPI; **solo Vercel**.
 - `META_API_VERSION`: versión de Graph API que se haya validado al desplegar.
@@ -83,16 +83,9 @@ Para probar el flujo real, instalar Vercel CLI, crear `.env.local` (ignorado por
 1. Importar el repositorio en Vercel.
 2. Configurar todas las variables anteriores para Production/Preview.
 3. Verificar el dominio remitente en Resend.
-4. Desplegar y dejar `API_BASE_URL: ""` si página y función comparten dominio.
+4. Desplegar frontend y API juntos; el formulario usa siempre `/api/lead`.
 5. Agregar el dominio final a `ALLOWED_ORIGINS`, actualizar canonical/OG/Schema en `index.html` y desplegar otra vez.
 
-### GitHub Pages + API en Vercel
-
-1. Desplegar este repositorio también en Vercel para disponer de `/api/lead`.
-2. En `js/config.js`, apuntar `API_BASE_URL` al dominio HTTPS de Vercel.
-3. Configurar `ALLOWED_ORIGINS=https://marianesteban.github.io` en Vercel.
-4. Publicar la rama principal desde Settings → Pages.
-5. Probar un lead real desde la URL pública y confirmar recepción del email.
 
 ## Configuración en Meta Events Manager
 
