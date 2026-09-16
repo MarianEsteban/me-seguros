@@ -25,9 +25,11 @@
   function captureAttribution() {
     const params = new URLSearchParams(location.search);
     const stored = JSON.parse(safeStorage.get("me_attribution") || "{}");
-    ATTRIBUTION_KEYS.forEach((key) => { if (params.get(key)) stored[key] = params.get(key).slice(0, 250); });
-    stored.landing_page ||= location.href;
-    stored.first_seen_at ||= new Date().toISOString();
+    const current = {};
+    ATTRIBUTION_KEYS.forEach((key) => { if (params.get(key)) current[key] = params.get(key).slice(0, 250); });
+    const touch = { ...current, url: location.href, seen_at: new Date().toISOString() };
+    stored.first_touch ||= touch;
+    stored.last_touch = touch;
     safeStorage.set("me_attribution", JSON.stringify(stored));
     return stored;
   }
@@ -50,7 +52,7 @@
   }
 
   const attribution = captureAttribution();
-  initPixel();
+  if (safeStorage.get("me_analytics_consent") === "granted") initPixel();
   document.querySelector("#current-year").textContent = new Date().getFullYear();
 
   const navToggle = document.querySelector(".nav-toggle");
@@ -112,17 +114,13 @@
     event.preventDefault();
     formStatus.classList.remove("visible");
     if (!validate()) return;
-    if (!CONFIG.API_BASE_URL && location.hostname.endsWith("github.io")) {
-      formStatus.textContent = "El formulario todavía no está conectado al servidor. Podés continuar por WhatsApp.";
-      formStatus.classList.add("visible"); return;
-    }
     const submit = form.querySelector("[type=submit]"); submit.disabled = true; submit.textContent = "Enviando…";
     const data = Object.fromEntries(new FormData(form));
     const eventId = uuid();
-    const payload = { ...data, consent: true, event_id: eventId, event_source_url: location.href, attribution, fbp: getCookie("_fbp"), fbc: getCookie("_fbc") };
+    const payloadAttribution = { ...attribution, conversion_url: location.href, converted_at: new Date().toISOString() };
+    const payload = { ...data, consent: true, event_id: eventId, event_source_url: location.href, attribution: payloadAttribution, fbp: getCookie("_fbp"), fbc: getCookie("_fbc") };
     try {
-      const endpoint = `${(CONFIG.API_BASE_URL || "").replace(/\/$/, "")}/api/lead`;
-      const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      const response = await fetch("/api/lead", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.ok) throw new Error(result.error || "No se pudo enviar");
       track("Lead", { content_name: data.inquiryType, lead_type: "quote_form" }, eventId);
@@ -138,4 +136,14 @@
   document.querySelectorAll("[data-modal-open]").forEach((button) => button.addEventListener("click", () => dialog.showModal()));
   document.querySelector("[data-modal-close]").addEventListener("click", () => dialog.close());
   dialog.addEventListener("click", (event) => { if (event.target === dialog) dialog.close(); });
+
+  const preferences = document.querySelector("#analytics-preferences");
+  const savedPreference = safeStorage.get("me_analytics_consent");
+  preferences.hidden = savedPreference === "granted" || savedPreference === "denied";
+  preferences.querySelector("[data-analytics-accept]").addEventListener("click", () => {
+    safeStorage.set("me_analytics_consent", "granted"); preferences.hidden = true; initPixel();
+  });
+  preferences.querySelector("[data-analytics-reject]").addEventListener("click", () => {
+    safeStorage.set("me_analytics_consent", "denied"); preferences.hidden = true;
+  });
 })();

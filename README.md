@@ -10,11 +10,11 @@ Landing mobile-first para el funnel **Meta Ads → landing → lead/WhatsApp →
 - Entrega real del lead por email mediante Resend. **El frontend solo confirma si el servidor confirma la entrega**; sin backend configurado muestra un error y ofrece WhatsApp.
 - Persistencia local de UTM y `fbclid`, y asociación de atribución al email y al evento server-side.
 - Meta Pixel configurable y endpoint Vercel para Conversions API (CAPI), sin secretos en el navegador.
-- Consentimiento, aviso de privacidad preliminar, honeypot, validación cliente/servidor, semántica y navegación accesible.
+- Consentimiento de contacto, analítica opcional con preferencias, honeypot, validación cliente/servidor, semántica y navegación accesible.
 
 ## Arquitectura
 
-El HTML/CSS/JS sigue siendo la opción más simple y rápida: no hace falta un framework para esta landing. GitHub Pages sirve el frontend y una Vercel Function recibe `POST /api/lead`.
+El HTML/CSS/JS sigue siendo la opción más simple y rápida: no hace falta un framework para esta landing. Vercel sirve el frontend y la Function que recibe `POST /api/lead` bajo el mismo origen. GitHub se usa únicamente como repositorio.
 
 1. El navegador conserva los parámetros de primera atribución en `localStorage` y obtiene `_fbp`/`_fbc` si existen.
 2. Al enviar, genera un `event_id` único y manda datos, atribución e identificadores permitidos a Vercel.
@@ -36,17 +36,7 @@ Los clics de WhatsApp no se envían a CAPI porque abrir una app externa no confi
 
 ## Configuración pública del frontend
 
-Editar `js/config.js`:
-
-```js
-window.ME_CONFIG = Object.freeze({
-  META_PIXEL_ID: "PIXEL_ID_REAL",
-  API_BASE_URL: "https://tu-proyecto.vercel.app",
-  META_TEST_EVENT_CODE: ""
-});
-```
-
-`META_PIXEL_ID` no es secreto. `API_BASE_URL` puede quedar vacío si frontend y API se sirven en el mismo despliegue de Vercel. No agregar tokens a este archivo.
+Editar `js/config.js` únicamente para definir `META_PIXEL_ID` cuando se habilite la medición. El ID no es secreto; los tokens nunca deben publicarse. El frontend siempre envía el formulario a `/api/lead` en el mismo origen.
 
 ## Variables secretas en Vercel
 
@@ -56,7 +46,9 @@ Copiar `.env.example` en la configuración del proyecto, no en Git:
 - `LEAD_TO_EMAIL`: casilla real donde Mariano recibirá leads.
 - `LEAD_FROM_EMAIL`: remitente de un dominio validado en Resend.
 - `LEAD_REPLY_TO`: casilla de respuesta (opcional).
-- `ALLOWED_ORIGINS`: orígenes exactos separados por coma, por ejemplo `https://marianesteban.github.io,https://www.meseguros.com.ar`. Un origin no lleva ruta.
+- `ALLOWED_ORIGINS`: orígenes exactos de Vercel y del dominio final, separados por coma. Un origin no lleva ruta. Localhost se admite automáticamente solo fuera de producción.
+- `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN`: conexión a Redis para rate limiting e idempotencia. También se aceptan los nombres `KV_REST_API_URL` y `KV_REST_API_TOKEN`.
+- `RATE_LIMIT_PER_MINUTE`: máximo de intentos por IP y minuto (por defecto, 10).
 - `META_PIXEL_ID`: ID real del dataset/píxel.
 - `META_ACCESS_TOKEN`: token de CAPI; **solo Vercel**.
 - `META_API_VERSION`: versión de Graph API que se haya validado al desplegar.
@@ -76,23 +68,15 @@ python3 -m http.server 8000
 
 Para probar el flujo real, instalar Vercel CLI, crear `.env.local` (ignorado por Git) y ejecutar `vercel dev`. Nunca usar una API key productiva en un archivo versionado.
 
-## Despliegue
+## Despliegue en Vercel
 
-### Recomendado: todo en Vercel
+1. Importar el repositorio en Vercel; no habilitar GitHub Pages.
+2. Configurar las variables para Production y Preview, incluido el origin exacto de cada despliegue.
+3. Verificar el dominio remitente en Resend y vincular Upstash Redis.
+4. Configurar el dominio definitivo y actualizar canonical/OG/Schema en `index.html`.
+5. Probar email, deduplicación, límites, consentimiento de analítica y CAPI antes de lanzar campañas.
 
-1. Importar el repositorio en Vercel.
-2. Configurar todas las variables anteriores para Production/Preview.
-3. Verificar el dominio remitente en Resend.
-4. Desplegar y dejar `API_BASE_URL: ""` si página y función comparten dominio.
-5. Agregar el dominio final a `ALLOWED_ORIGINS`, actualizar canonical/OG/Schema en `index.html` y desplegar otra vez.
-
-### GitHub Pages + API en Vercel
-
-1. Desplegar este repositorio también en Vercel para disponer de `/api/lead`.
-2. En `js/config.js`, apuntar `API_BASE_URL` al dominio HTTPS de Vercel.
-3. Configurar `ALLOWED_ORIGINS=https://marianesteban.github.io` en Vercel.
-4. Publicar la rama principal desde Settings → Pages.
-5. Probar un lead real desde la URL pública y confirmar recepción del email.
+GitHub aloja el código y la branch de despliegue, pero no sirve el sitio: frontend y `/api/lead` deben permanecer en el mismo proyecto Vercel.
 
 ## Configuración en Meta Events Manager
 
