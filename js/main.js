@@ -24,12 +24,21 @@
 
   function captureAttribution() {
     const params = new URLSearchParams(location.search);
-    const stored = JSON.parse(safeStorage.get("me_attribution") || "{}");
-    ATTRIBUTION_KEYS.forEach((key) => { if (params.get(key)) stored[key] = params.get(key).slice(0, 250); });
-    stored.landing_page ||= location.href;
-    stored.first_seen_at ||= new Date().toISOString();
-    safeStorage.set("me_attribution", JSON.stringify(stored));
-    return stored;
+    const current = {};
+    ATTRIBUTION_KEYS.forEach((key) => { if (params.get(key)) current[key] = params.get(key).slice(0, 250); });
+    current.landing_page = location.href;
+    current.seen_at = new Date().toISOString();
+    return current;
+  }
+
+  function persistAttribution(current) {
+    let stored = {};
+    try { stored = JSON.parse(safeStorage.get("me_attribution") || "{}"); } catch { /* Ignorar datos locales dañados. */ }
+    const firstTouch = stored.first_touch || current;
+    // Se conservan las claves planas para compatibilidad y ambos contactos para análisis.
+    const attribution = { ...current, first_touch: firstTouch, last_touch: current };
+    safeStorage.set("me_attribution", JSON.stringify(attribution));
+    return attribution;
   }
 
   function initPixel() {
@@ -55,12 +64,23 @@
 
   const navToggle = document.querySelector(".nav-toggle");
   const nav = document.querySelector(".nav");
-  navToggle?.addEventListener("click", () => {
-    const open = nav.classList.toggle("open");
+  const navToggleLabel = navToggle?.querySelector(".sr-only");
+  function setMenu(open) {
+    nav.classList.toggle("open", open);
     navToggle.setAttribute("aria-expanded", String(open));
     document.body.classList.toggle("menu-open", open);
+    if (navToggleLabel) navToggleLabel.textContent = open ? "Cerrar menú" : "Abrir menú";
+  }
+  navToggle?.addEventListener("click", () => {
+    setMenu(!nav.classList.contains("open"));
   });
-  nav?.addEventListener("click", (event) => { if (event.target.matches("a")) { nav.classList.remove("open"); navToggle.setAttribute("aria-expanded", "false"); document.body.classList.remove("menu-open"); } });
+  nav?.addEventListener("click", (event) => { if (event.target.matches("a")) setMenu(false); });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && nav?.classList.contains("open")) {
+      setMenu(false);
+      navToggle.focus();
+    }
+  });
 
   document.querySelectorAll(".js-whatsapp").forEach((link) => {
     const context = link.dataset.context || "general";
@@ -119,7 +139,8 @@
     const submit = form.querySelector("[type=submit]"); submit.disabled = true; submit.textContent = "Enviando…";
     const data = Object.fromEntries(new FormData(form));
     const eventId = uuid();
-    const payload = { ...data, consent: true, event_id: eventId, event_source_url: location.href, attribution, fbp: getCookie("_fbp"), fbc: getCookie("_fbc") };
+    const consentedAttribution = persistAttribution(attribution);
+    const payload = { ...data, consent: true, event_id: eventId, event_source_url: location.href, attribution: consentedAttribution, fbp: getCookie("_fbp"), fbc: getCookie("_fbc") };
     try {
       const endpoint = `${(CONFIG.API_BASE_URL || "").replace(/\/$/, "")}/api/lead`;
       const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
@@ -135,7 +156,16 @@
   document.querySelector("#new-inquiry").addEventListener("click", () => { form.reset(); updateVehicleFields(); form.hidden = false; successPanel.hidden = true; form.querySelector("input").focus(); });
 
   const dialog = document.querySelector("#privacy-dialog");
-  document.querySelectorAll("[data-modal-open]").forEach((button) => button.addEventListener("click", () => dialog.showModal()));
+  let dialogOpener;
+  const restoreDialogFocus = () => {
+    if (dialogOpener?.isConnected) dialogOpener.focus();
+    dialogOpener = undefined;
+  };
+  document.querySelectorAll("[data-modal-open]").forEach((button) => button.addEventListener("click", () => {
+    dialogOpener = button;
+    dialog.showModal();
+  }));
   document.querySelector("[data-modal-close]").addEventListener("click", () => dialog.close());
   dialog.addEventListener("click", (event) => { if (event.target === dialog) dialog.close(); });
+  dialog.addEventListener("close", restoreDialogFocus);
 })();
