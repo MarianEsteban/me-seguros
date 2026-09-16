@@ -1,133 +1,90 @@
-# ME Seguros — landing de performance
+# ME Seguros — landing consolidada
 
-Landing mobile-first para el funnel **Meta Ads → landing → lead/WhatsApp → cotización → cierre** de Mariano Esteban, Productor Asesor de Seguros (matrícula N.º 87555).
+Landing mobile-first de Mariano Esteban, Productor Asesor de Seguros (matrícula N.º 87555), preparada para el funnel **Meta Ads → cotización → contacto**. El proyecto mantiene HTML, CSS y JavaScript sin framework: Vercel publica los archivos estáticos y ejecuta la Function del mismo repositorio.
 
-## Qué se implementó
+## Arquitectura resultante
 
-- Propuesta de valor y CTA de cotización visibles en el primer pantallazo.
-- Coberturas con mensajes de WhatsApp específicos para automotor, hogar, comercio, vida, accidentes personales, asistencia al viajero y consulta general.
-- Formulario breve tradicional (mejor que uno progresivo para solo seis datos): vehículo y año aparecen únicamente en automotor.
-- Entrega real del lead por email mediante Resend. **El frontend solo confirma si el servidor confirma la entrega**; sin backend configurado muestra un error y ofrece WhatsApp.
-- Persistencia local de UTM y `fbclid`, y asociación de atribución al email y al evento server-side.
-- Meta Pixel configurable y endpoint Vercel para Conversions API (CAPI), sin secretos en el navegador.
-- Consentimiento, aviso de privacidad preliminar, honeypot, validación cliente/servidor, semántica y navegación accesible.
+- **Un solo origen en Vercel:** el navegador envía siempre `POST /api/lead`; GitHub es únicamente el repositorio.
+- **Entrega confirmada:** la Function valida, limita por IP, reclama el `event_id` y entrega por Resend. El navegador muestra éxito únicamente cuando recibe `lead_received: true`.
+- **Persistencia de producción:** Upstash Redis o Vercel KV compatible con REST mantiene rate limiting e idempotencia. El fallback en memoria solo funciona fuera de `NODE_ENV=production`.
+- **Idempotencia:** estados `processing`, `delivered` y `delivered:capi`. Un duplicado `processing` devuelve `409`; uno entregado devuelve confirmación sin solicitar otro correo. Resend recibe `Idempotency-Key: lead/<event_id>`.
+- **Fallos parciales seguros:** un fallo de email libera el claim; un fallo de CAPI o de Redis posterior al email no niega un lead ya recibido.
+- **Presupuesto de tiempo:** Redis 0,6 s por operación, Resend 3 s y CAPI 1,8 s. Los pasos críticos se mantienen dentro de `maxDuration: 10`; cada llamada externa usa `AbortController`.
 
-## Arquitectura
+## Privacidad, atribución y eventos
 
-El HTML/CSS/JS sigue siendo la opción más simple y rápida: no hace falta un framework para esta landing. GitHub Pages sirve el frontend y una Vercel Function recibe `POST /api/lead`.
+Hay dos consentimientos separados. El de contacto es obligatorio; el publicitario es opcional. Antes de aceptar medición no se carga Pixel, no se envía CAPI y no se guardan UTM, `fbclid`, `fbp` o `fbc` en `localStorage`. La preferencia puede revisarse desde el pie de página. Si el formulario ya se vio, `ViewContent` queda pendiente en memoria y se emite una sola vez al aceptar.
 
-1. El navegador conserva los parámetros de primera atribución en `localStorage` y obtiene `_fbp`/`_fbc` si existen.
-2. Al enviar, genera un `event_id` único y manda datos, atribución e identificadores permitidos a Vercel.
-3. La función valida los datos y entrega el lead por Resend.
-4. Solo después de esa entrega envía `Lead` a CAPI. Normaliza y hashea con SHA-256 teléfono, nombre, apellido, localidad y país **en servidor**.
-5. Ante respuesta exitosa, el navegador dispara `Lead` con el mismo `event_id`. Meta puede deduplicar browser + server.
-6. Si CAPI falla pero el email se entregó, el lead se confirma y se registra el error en Vercel. Si el email falla, no se dispara `Lead` ni se muestra una confirmación falsa.
+Con consentimiento se conservan `first_touch`, `last_touch`, URL y fecha de conversión, UTM, `fbclid`, `fbp` y `fbc`. El email incluye la atribución. CAPI recibe teléfono argentino normalizado, nombre, apellido, localidad y país hasheados, además de IP, user-agent y los identificadores disponibles.
 
-### Eventos
-
-| Evento | Momento | Canal |
+| Evento | Condición | Canal |
 | --- | --- | --- |
-| `PageView` | carga, una vez | Pixel |
-| `ViewContent` | primera vista/interacción con el formulario | Pixel |
-| `Contact` | clic en cualquier CTA de WhatsApp, con contexto | Pixel |
-| `Lead` | entrega real del formulario | Pixel + CAPI, mismo `event_id` |
+| `PageView` | al cargar Pixel después del consentimiento | Pixel |
+| `ViewContent` | primera vista del formulario; queda pendiente hasta consentir | Pixel |
+| `Contact` | clic en WhatsApp, no implica mensaje enviado | Pixel |
+| `Lead` | Resend confirmó la entrega | Pixel + CAPI con el mismo `event_id` |
 
-Los clics de WhatsApp no se envían a CAPI porque abrir una app externa no confirma que el mensaje se haya enviado. `Contact` en Pixel mide correctamente el clic relevante sin inflar `Lead`.
+## Variables de Vercel
 
-## Configuración pública del frontend
+Copiar los nombres de `.env.example` en **Project Settings → Environment Variables**:
 
-Editar `js/config.js`:
+- `RESEND_API_KEY`: clave privada de Resend.
+- `LEAD_TO_EMAIL`: correo donde Mariano recibe las consultas.
+- `LEAD_FROM_EMAIL`: remitente perteneciente al dominio verificado en Resend.
+- `LEAD_REPLY_TO`: correo para respuestas.
+- `ALLOWED_ORIGINS`: orígenes HTTPS exactos, separados por coma y sin rutas.
+- `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN`: conexión REST privada de producción.
+- `META_PIXEL_ID`: ID del Pixel/dataset; también se copia como valor público en `js/config.js`.
+- `META_ACCESS_TOKEN`: token privado de Conversions API.
+- `META_API_VERSION`: versión validada de Graph API, por ejemplo `v23.0`.
+- `META_TEST_EVENT_CODE`: solo durante pruebas en Events Manager; quitarlo al lanzar.
 
-```js
-window.ME_CONFIG = Object.freeze({
-  META_PIXEL_ID: "PIXEL_ID_REAL",
-  API_BASE_URL: "https://tu-proyecto.vercel.app",
-  META_TEST_EVENT_CODE: ""
-});
-```
+Nunca agregar claves o tokens a `js/config.js`. `META_PIXEL_ID` es el único dato público requerido allí.
 
-`META_PIXEL_ID` no es secreto. `API_BASE_URL` puede quedar vacío si frontend y API se sirven en el mismo despliegue de Vercel. No agregar tokens a este archivo.
+## Dominio y SEO: bloqueo deliberado antes del deploy
 
-## Variables secretas en Vercel
+El dominio final no fue informado. Para no inventarlo, `index.html` usa el marcador inequívoco `https://REEMPLAZAR-CON-DOMINIO-REAL.example/` en canonical, `og:url`, `og:image` y Schema. **Antes de publicar**, reemplazar todas sus apariciones por el dominio HTTPS real y agregar esos mismos orígenes a `ALLOWED_ORIGINS`. No lanzar campañas con el marcador.
 
-Copiar `.env.example` en la configuración del proyecto, no en Git:
+## Pasos manuales
 
-- `RESEND_API_KEY`: API key de Resend.
-- `LEAD_TO_EMAIL`: casilla real donde Mariano recibirá leads.
-- `LEAD_FROM_EMAIL`: remitente de un dominio validado en Resend.
-- `LEAD_REPLY_TO`: casilla de respuesta (opcional).
-- `ALLOWED_ORIGINS`: orígenes exactos separados por coma, por ejemplo `https://marianesteban.github.io,https://www.meseguros.com.ar`. Un origin no lleva ruta.
-- `META_PIXEL_ID`: ID real del dataset/píxel.
-- `META_ACCESS_TOKEN`: token de CAPI; **solo Vercel**.
-- `META_API_VERSION`: versión de Graph API que se haya validado al desplegar.
-- `META_TEST_EVENT_CODE`: código temporal de “Probar eventos”; eliminar luego.
+### Vercel
 
-> No hay credenciales reales en el repositorio. La versión de Graph API debe revisarse periódicamente contra la documentación vigente de Meta.
+1. Importar este repositorio y seleccionar la branch que se fusione como Production Branch.
+2. No configurar un directorio separado ni GitHub Pages: Vercel debe servir frontend y `/api/lead` juntos.
+3. Crear las variables anteriores para Production (y valores aislados para Preview si se prueba allí).
+4. Crear/conectar Upstash Redis o Vercel KV REST y comprobar que inyecte URL y token compatibles.
+5. Asignar el dominio definitivo, reemplazar el marcador SEO, actualizar `ALLOWED_ORIGINS` y desplegar.
+6. Enviar un lead real y comprobar email, respuesta JSON, logs y headers de seguridad.
 
-## Desarrollo y pruebas
+### Resend
+
+1. Verificar el dominio remitente (SPF/DKIM) y crear una API key con el alcance mínimo necesario.
+2. Configurar remitente, destinatario y reply-to en Vercel.
+3. Confirmar entrega real, spam y formato del email. No considerar listo el funnel con una dirección de prueba restringida.
+
+### Meta Events Manager
+
+1. Crear/elegir Pixel y dataset, copiar el ID al frontend y a Vercel, y generar el token CAPI solo para Vercel.
+2. Configurar temporalmente `META_TEST_EVENT_CODE` y probar ambas decisiones de consentimiento.
+3. Confirmar `PageView`, `ViewContent`, `Contact` y `Lead`; verificar que Browser/Server deduplican `Lead` por el mismo `event_id`.
+4. Revisar calidad de coincidencia, diagnóstico, dominio verificado y parámetros UTM.
+5. Eliminar `META_TEST_EVENT_CODE` antes de activar campañas.
+
+## Desarrollo y auditoría
 
 Requiere Node.js 20 o superior.
 
 ```bash
 npm test
 npm run check
-python3 -m http.server 8000
+git diff --check
 ```
 
-Para probar el flujo real, instalar Vercel CLI, crear `.env.local` (ignorado por Git) y ejecutar `vercel dev`. Nunca usar una API key productiva en un archivo versionado.
+Para pruebas locales completas, usar `vercel dev`; localhost está permitido exclusivamente fuera de producción. Los tests cubren validación, automotor, teléfonos argentinos, CORS, origen del evento, rate limiting, estados idempotentes, reintentos, fallos parciales, consentimiento estricto y deduplicación Pixel/CAPI.
 
-## Despliegue
+## Pendientes operativos no públicos
 
-### Recomendado: todo en Vercel
-
-1. Importar el repositorio en Vercel.
-2. Configurar todas las variables anteriores para Production/Preview.
-3. Verificar el dominio remitente en Resend.
-4. Desplegar y dejar `API_BASE_URL: ""` si página y función comparten dominio.
-5. Agregar el dominio final a `ALLOWED_ORIGINS`, actualizar canonical/OG/Schema en `index.html` y desplegar otra vez.
-
-### GitHub Pages + API en Vercel
-
-1. Desplegar este repositorio también en Vercel para disponer de `/api/lead`.
-2. En `js/config.js`, apuntar `API_BASE_URL` al dominio HTTPS de Vercel.
-3. Configurar `ALLOWED_ORIGINS=https://marianesteban.github.io` en Vercel.
-4. Publicar la rama principal desde Settings → Pages.
-5. Probar un lead real desde la URL pública y confirmar recepción del email.
-
-## Configuración en Meta Events Manager
-
-1. Crear o elegir el dataset/píxel de ME Seguros y copiar su ID a frontend y Vercel.
-2. Generar un token de Conversions API y guardarlo únicamente como `META_ACCESS_TOKEN` en Vercel.
-3. Usar “Probar eventos”, completar temporalmente `META_TEST_EVENT_CODE` y enviar un formulario real.
-4. Confirmar `PageView`, `ViewContent`, `Contact` y un `Lead` browser/server deduplicado por `event_id`.
-5. Revisar Diagnóstico y calidad de coincidencia. El lead envía teléfono, nombre, apellido, ciudad y país hasheados, además de IP/user-agent y `fbp`/`fbc` cuando existen.
-6. Quitar `META_TEST_EVENT_CODE`, verificar el dominio, priorizar `Lead` si la configuración publicitaria lo requiere y crear audiencias de visitantes, vistas del formulario y contactos.
-7. Verificar en campañas que las UTM estén completas; usar nombres consistentes para campaña, conjunto/anuncio y creatividad.
-
-## Auditoría inicial resumida
-
-La versión anterior era institucional y extensa: el CTA principal conducía directamente a WhatsApp, no había formulario ni entrega de leads, atribución, Pixel o CAPI. Había contenido repetido entre asesor/nosotros/proceso, cinco pasos largos, métricas visuales (“6+”, “1:1”) sin valor de conversión, imagen de logo de 1024×1024 servida a 52–60 px, dependencia de Google Fonts y enlaces de WhatsApp hardcodeados sin tracking. El acordeón no relacionaba controles/paneles mediante IDs. Tampoco existían consentimiento, aviso de privacidad, manejo de error de entrega ni backend.
-
-La revisión llevó a: jerarquía orientada a intención, CTA primario al formulario, WhatsApp alternativo y contextual, menos contenido, tres pasos, CSS con fuentes del sistema, dimensiones explícitas, una sola imagen above-the-fold y JS diferido. La pieza `mariano-seguros-blanco 3.png` no se usa porque es una marca horizontal pequeña, no una fotografía real del asesor; no se inventó presencia visual ni prueba social.
-
-## Pendientes que requieren datos o validación real
-
-- ID de Pixel, token CAPI, casillas de email, API key y dominio verificado de Resend.
-- Dominio definitivo; al tenerlo, actualizar canonical, OG, Schema y orígenes.
-- Foto profesional real de Mariano, si decide incorporarla. No se usó stock.
-- Horarios/canales formales de atención y plazo de conservación de leads.
-- Revisión del aviso de privacidad por Mariano y, de ser necesario, un profesional legal argentino. El texto actual es informativo y marca explícitamente lo pendiente; no reemplaza asesoramiento legal.
-- Definición operativa de estados posteriores (cotizado/cerrado). Para optimizar a ventas, conviene que un CRM envíe luego eventos offline con su propio `event_id`.
-
-## Checklist antes de lanzar campañas
-
-- [ ] Formulario entrega un email real y la respuesta llega a Mariano.
-- [ ] Todos los CTA abren el mensaje contextual correcto en Android/iOS.
-- [ ] Events Manager recibe y deduplica `Lead` de Pixel/CAPI.
-- [ ] `META_TEST_EVENT_CODE` fue eliminado.
-- [ ] UTM y `fbclid` aparecen en el email de prueba.
-- [ ] Dominio, canonical, OG y Schema coinciden.
-- [ ] Aviso de privacidad, retención y contacto para derechos fueron validados.
-- [ ] Página 404/errores, consola, mobile real y navegadores principales revisados.
-- [ ] Campaña usa una conversión `Lead` coherente y no confunde `Contact` con un mensaje efectivamente enviado.
-- [ ] Existe un proceso para responder rápido, registrar cotización y cierre.
+- Confirmar dominio final y reemplazar el marcador SEO.
+- Completar valores reales de Vercel, verificar Resend y configurar Meta.
+- Definir internamente el plazo de retención y el procedimiento para solicitudes de privacidad; el aviso público ya está redactado sin notas de trabajo.
+- Realizar control legal final del aviso para la operación concreta de Mariano antes de invertir en pauta.
