@@ -8,20 +8,22 @@ Landing mobile-first para el funnel **Meta Ads → landing → lead/WhatsApp →
 - Coberturas con mensajes de WhatsApp específicos para automotor, hogar, comercio, vida, accidentes personales, asistencia al viajero y consulta general.
 - Formulario breve tradicional (mejor que uno progresivo para solo seis datos): vehículo y año aparecen únicamente en automotor.
 - Entrega real del lead por email mediante Resend. **El frontend solo confirma si el servidor confirma la entrega**; sin backend configurado muestra un error y ofrece WhatsApp.
-- Persistencia local de UTM y `fbclid`, y asociación de atribución al email y al evento server-side.
+- Atribución UTM/`fbclid` y Meta Pixel únicamente después del consentimiento opcional de medición.
 - Meta Pixel configurable y endpoint Vercel para Conversions API (CAPI), sin secretos en el navegador.
-- Consentimiento, aviso de privacidad preliminar, honeypot, validación cliente/servidor, semántica y navegación accesible.
+- Consentimientos separados para contacto y medición, aviso de privacidad preliminar, honeypot, validación cliente/servidor, semántica y navegación accesible.
+- Rate limiting e idempotencia compartidos mediante Vercel KV/Upstash, con respaldo en memoria para desarrollo.
 
 ## Arquitectura
 
 El HTML/CSS/JS sigue siendo la opción más simple y rápida: no hace falta un framework para esta landing. GitHub Pages sirve el frontend y una Vercel Function recibe `POST /api/lead`.
 
-1. El navegador conserva los parámetros de primera atribución en `localStorage` y obtiene `_fbp`/`_fbc` si existen.
-2. Al enviar, genera un `event_id` único y manda datos, atribución e identificadores permitidos a Vercel.
-3. La función valida los datos y entrega el lead por Resend.
-4. Solo después de esa entrega envía `Lead` a CAPI. Normaliza y hashea con SHA-256 teléfono, nombre, apellido, localidad y país **en servidor**.
-5. Ante respuesta exitosa, el navegador dispara `Lead` con el mismo `event_id`. Meta puede deduplicar browser + server.
-6. Si CAPI falla pero el email se entregó, el lead se confirma y se registra el error en Vercel. Si el email falla, no se dispara `Lead` ni se muestra una confirmación falsa.
+1. Antes de aceptar la medición no se carga Meta Pixel ni se persiste atribución en el navegador. Rechazarla no impide cotizar.
+2. Con permiso, el navegador conserva parámetros de primera atribución en `localStorage` y obtiene `_fbp`/`_fbc` si existen.
+3. Al enviar, genera un `event_id` único. La función limita intentos por IP, valida tamaño y campos, y reclama ese ID de forma atómica.
+4. Resend recibe el mismo ID como clave de idempotencia. Un reintento no vuelve a enviar el correo; si la entrega falla, la reserva se libera para permitir un intento posterior.
+5. Solo después de entregar el email, y si hubo permiso de medición, se envía `Lead` a CAPI. Teléfono, nombre, apellido, localidad y país se normalizan y hashean con SHA-256 **en servidor**.
+6. Ante respuesta exitosa, el navegador dispara `Lead` con el mismo `event_id`. Meta puede deduplicar browser + server.
+7. Si CAPI falla pero el email se entregó, el lead se confirma y se registra el error en Vercel. Si el email falla, no se dispara `Lead` ni se muestra una confirmación falsa.
 
 ### Eventos
 
@@ -42,7 +44,7 @@ Editar `js/config.js`:
 window.ME_CONFIG = Object.freeze({
   META_PIXEL_ID: "PIXEL_ID_REAL",
   API_BASE_URL: "https://tu-proyecto.vercel.app",
-  META_TEST_EVENT_CODE: ""
+  PRIVACY_CONSENT_VERSION: "2026-09"
 });
 ```
 
@@ -61,6 +63,9 @@ Copiar `.env.example` en la configuración del proyecto, no en Git:
 - `META_ACCESS_TOKEN`: token de CAPI; **solo Vercel**.
 - `META_API_VERSION`: versión de Graph API que se haya validado al desplegar.
 - `META_TEST_EVENT_CODE`: código temporal de “Probar eventos”; eliminar luego.
+- `KV_REST_API_URL` y `KV_REST_API_TOKEN`: REST API de Vercel KV/Upstash para rate limiting e idempotencia distribuida. También se reconocen `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN`.
+
+En producción se recomienda configurar Redis. Sin esas variables, la protección usa memoria de la instancia: resulta útil en desarrollo, pero no coordina varias instancias serverless. El límite actual es de cinco solicitudes válidas por IP cada diez minutos y los `event_id` quedan reservados durante 24 horas.
 
 > No hay credenciales reales en el repositorio. La versión de Graph API debe revisarse periódicamente contra la documentación vigente de Meta.
 
@@ -100,7 +105,7 @@ Para probar el flujo real, instalar Vercel CLI, crear `.env.local` (ignorado por
 2. Generar un token de Conversions API y guardarlo únicamente como `META_ACCESS_TOKEN` en Vercel.
 3. Usar “Probar eventos”, completar temporalmente `META_TEST_EVENT_CODE` y enviar un formulario real.
 4. Confirmar `PageView`, `ViewContent`, `Contact` y un `Lead` browser/server deduplicado por `event_id`.
-5. Revisar Diagnóstico y calidad de coincidencia. El lead envía teléfono, nombre, apellido, ciudad y país hasheados, además de IP/user-agent y `fbp`/`fbc` cuando existen.
+5. Aceptar la medición en la página de prueba y revisar Diagnóstico y calidad de coincidencia. Con ese permiso, el lead envía teléfono, nombre, apellido, ciudad y país hasheados, además de IP/user-agent y `fbp`/`fbc` cuando existen.
 6. Quitar `META_TEST_EVENT_CODE`, verificar el dominio, priorizar `Lead` si la configuración publicitaria lo requiere y crear audiencias de visitantes, vistas del formulario y contactos.
 7. Verificar en campañas que las UTM estén completas; usar nombres consistentes para campaña, conjunto/anuncio y creatividad.
 
@@ -128,6 +133,8 @@ La revisión llevó a: jerarquía orientada a intención, CTA primario al formul
 - [ ] UTM y `fbclid` aparecen en el email de prueba.
 - [ ] Dominio, canonical, OG y Schema coinciden.
 - [ ] Aviso de privacidad, retención y contacto para derechos fueron validados.
+- [ ] La decisión de medición se respeta: sin aceptar no hay solicitudes a Meta ni atribución persistente.
+- [ ] KV/Upstash está configurado y un reintento con el mismo `event_id` no duplica el correo.
 - [ ] Página 404/errores, consola, mobile real y navegadores principales revisados.
 - [ ] Campaña usa una conversión `Lead` coherente y no confunde `Contact` con un mensaje efectivamente enviado.
 - [ ] Existe un proceso para responder rápido, registrar cotización y cierre.

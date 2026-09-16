@@ -17,18 +17,22 @@
 
   const safeStorage = {
     get(key) { try { return localStorage.getItem(key); } catch { return null; } },
-    set(key, value) { try { localStorage.setItem(key, value); } catch { /* Storage puede estar bloqueado. */ } }
+    set(key, value) { try { localStorage.setItem(key, value); } catch { /* Storage puede estar bloqueado. */ } },
+    remove(key) { try { localStorage.removeItem(key); } catch { /* Storage puede estar bloqueado. */ } }
   };
   const uuid = () => globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(16).slice(2)}`;
   const getCookie = (name) => document.cookie.split("; ").find((item) => item.startsWith(`${name}=`))?.split("=").slice(1).join("=") || "";
 
-  function captureAttribution() {
+  function captureAttribution(persist = false) {
     const params = new URLSearchParams(location.search);
-    const stored = JSON.parse(safeStorage.get("me_attribution") || "{}");
+    let stored = {};
+    if (persist) {
+      try { stored = JSON.parse(safeStorage.get("me_attribution") || "{}"); } catch { stored = {}; }
+    }
     ATTRIBUTION_KEYS.forEach((key) => { if (params.get(key)) stored[key] = params.get(key).slice(0, 250); });
     stored.landing_page ||= location.href;
     stored.first_seen_at ||= new Date().toISOString();
-    safeStorage.set("me_attribution", JSON.stringify(stored));
+    if (persist) safeStorage.set("me_attribution", JSON.stringify(stored));
     return stored;
   }
 
@@ -44,13 +48,31 @@
   }
 
   function track(name, parameters = {}, eventId) {
-    if (!window.fbq) return;
+    if (!analyticsConsent || !window.fbq) return;
     if (eventId) window.fbq("track", name, parameters, { eventID: eventId });
     else window.fbq("track", name, parameters);
   }
 
-  const attribution = captureAttribution();
-  initPixel();
+  const consentKey = `me_analytics_consent_${CONFIG.PRIVACY_CONSENT_VERSION || "1"}`;
+  let analyticsConsent = safeStorage.get(consentKey) === "accepted";
+  let attribution = captureAttribution(analyticsConsent);
+  if (analyticsConsent) initPixel();
+  const consentBanner = document.querySelector("#analytics-consent");
+  if (!safeStorage.get(consentKey)) consentBanner.hidden = false;
+  document.querySelector("#accept-analytics")?.addEventListener("click", () => {
+    analyticsConsent = true;
+    safeStorage.set(consentKey, "accepted");
+    attribution = captureAttribution(true);
+    consentBanner.hidden = true;
+    initPixel();
+  });
+  document.querySelector("#reject-analytics")?.addEventListener("click", () => {
+    analyticsConsent = false;
+    safeStorage.set(consentKey, "rejected");
+    safeStorage.remove("me_attribution");
+    attribution = captureAttribution(false);
+    consentBanner.hidden = true;
+  });
   document.querySelector("#current-year").textContent = new Date().getFullYear();
 
   const navToggle = document.querySelector(".nav-toggle");
@@ -61,6 +83,7 @@
     document.body.classList.toggle("menu-open", open);
   });
   nav?.addEventListener("click", (event) => { if (event.target.matches("a")) { nav.classList.remove("open"); navToggle.setAttribute("aria-expanded", "false"); document.body.classList.remove("menu-open"); } });
+  document.addEventListener("keydown", (event) => { if (event.key === "Escape" && nav?.classList.contains("open")) { nav.classList.remove("open"); navToggle.setAttribute("aria-expanded", "false"); document.body.classList.remove("menu-open"); navToggle.focus(); } });
 
   document.querySelectorAll(".js-whatsapp").forEach((link) => {
     const context = link.dataset.context || "general";
@@ -78,13 +101,16 @@
   const formStatus = document.querySelector("#form-status");
   const successPanel = document.querySelector("#success-panel");
 
-  const observer = new IntersectionObserver((entries) => { if (entries.some((entry) => entry.isIntersecting)) { markQuoteView("scroll"); observer.disconnect(); } }, { threshold: .45 });
-  observer.observe(form);
+  if ("IntersectionObserver" in window) {
+    const observer = new IntersectionObserver((entries) => { if (entries.some((entry) => entry.isIntersecting)) { markQuoteView("scroll"); observer.disconnect(); } }, { threshold: .45 });
+    observer.observe(form);
+  }
 
   function updateVehicleFields() {
     const isVehicle = inquiryType.value === "automotor";
     vehicleFields.classList.toggle("visible", isVehicle);
-    ["vehicle", "year"].forEach((name) => { form.elements[name].required = isVehicle; });
+    vehicleFields.hidden = !isVehicle;
+    ["vehicle", "year"].forEach((name) => { form.elements[name].required = isVehicle; form.elements[name].disabled = !isVehicle; });
   }
   inquiryType.addEventListener("change", updateVehicleFields);
   document.querySelectorAll(".js-quote-type").forEach((link) => link.addEventListener("click", () => { inquiryType.value = link.dataset.type; updateVehicleFields(); markQuoteView("coverage"); }));
@@ -119,13 +145,13 @@
     const submit = form.querySelector("[type=submit]"); submit.disabled = true; submit.textContent = "Enviando…";
     const data = Object.fromEntries(new FormData(form));
     const eventId = uuid();
-    const payload = { ...data, consent: true, event_id: eventId, event_source_url: location.href, attribution, fbp: getCookie("_fbp"), fbc: getCookie("_fbc") };
+    const payload = { ...data, consent: true, analytics_consent: analyticsConsent, event_id: eventId, event_source_url: location.href, attribution: analyticsConsent ? attribution : {}, fbp: analyticsConsent ? getCookie("_fbp") : "", fbc: analyticsConsent ? getCookie("_fbc") : "" };
     try {
       const endpoint = `${(CONFIG.API_BASE_URL || "").replace(/\/$/, "")}/api/lead`;
       const response = await fetch(endpoint, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       const result = await response.json().catch(() => ({}));
       if (!response.ok || !result.ok) throw new Error(result.error || "No se pudo enviar");
-      track("Lead", { content_name: data.inquiryType, lead_type: "quote_form" }, eventId);
+      if (!result.duplicate) track("Lead", { content_name: data.inquiryType, lead_type: "quote_form" }, eventId);
       form.hidden = true; successPanel.hidden = false; successPanel.focus();
     } catch {
       formStatus.textContent = "No pudimos enviar la consulta. Revisá tu conexión o escribinos por WhatsApp.";
@@ -138,4 +164,6 @@
   document.querySelectorAll("[data-modal-open]").forEach((button) => button.addEventListener("click", () => dialog.showModal()));
   document.querySelector("[data-modal-close]").addEventListener("click", () => dialog.close());
   dialog.addEventListener("click", (event) => { if (event.target === dialog) dialog.close(); });
+  document.querySelector("#privacy-settings")?.addEventListener("click", () => { dialog.close(); consentBanner.hidden = false; consentBanner.querySelector("button")?.focus(); });
+  updateVehicleFields();
 })();

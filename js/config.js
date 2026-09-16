@@ -5,5 +5,5 @@
 window.ME_CONFIG = Object.freeze({
   META_PIXEL_ID: "",
   API_BASE_URL: "",
-  META_TEST_EVENT_CODE: ""
+  PRIVACY_CONSENT_VERSION: "2026-09"
 });
