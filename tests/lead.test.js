@@ -1,5 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
 const handler = require("../api/lead");
 const api = handler._test;
 const client = require("../js/validation");
@@ -65,12 +66,18 @@ test("suite auditable del lead", async (t) => {
     assert.ok(api.validate({ ...base, analytics_consent: "false" }).includes("analytics_consent")); process.env.META_PIXEL_ID = "123456789"; process.env.META_ACCESS_TOKEN = "token"; let calls = 0; global.fetch = async () => { calls++; return { ok: true }; };
     const sent = await api.sendCapi({ ...base, analytics_consent: false }, { headers: {}, socket: {} }); assert.equal(sent, false); assert.equal(calls, 0); delete process.env.META_PIXEL_ID; delete process.env.META_ACCESS_TOKEN;
   });
+  await t.test("analítica aceptada habilita CAPI", async () => {
+    process.env.META_PIXEL_ID = "123456789"; process.env.META_ACCESS_TOKEN = "token"; let calls = 0;
+    global.fetch = async () => { calls++; return { ok: true }; };
+    const sent = await api.sendCapi({ ...base, analytics_consent: true }, { headers: {}, socket: {} });
+    assert.equal(sent, true); assert.equal(calls, 1); delete process.env.META_PIXEL_ID; delete process.env.META_ACCESS_TOKEN;
+  });
   await t.test("Pixel y CAPI usan exactamente el mismo event_id", async () => {
     process.env.META_PIXEL_ID = "123456789"; process.env.META_ACCESS_TOKEN = "token"; let payload; global.fetch = async (_url, options) => { payload = JSON.parse(options.body); return { ok: true }; };
     await api.sendCapi({ ...base, analytics_consent: true }, { headers: {}, socket: {} }); assert.equal(payload.data[0].event_id, base.event_id);
-    const frontend = require("node:fs").readFileSync("js/main.js", "utf8"); assert.match(frontend, /track\("Lead", \{ content_name: type\.value \}, currentEventId\)/); assert.match(frontend, /event_id: currentEventId/); delete process.env.META_PIXEL_ID; delete process.env.META_ACCESS_TOKEN;
+    const frontend = fs.readFileSync("js/main.js", "utf8"); assert.match(frontend, /track\("Lead", \{ content_name: type\.value \}, currentEventId\)/); assert.match(frontend, /event_id: currentEventId/); delete process.env.META_PIXEL_ID; delete process.env.META_ACCESS_TOKEN;
   });
-  await t.test("destildar consentimiento detiene eventos y reactivarlo no duplica PageView ni ViewContent", () => {
+  await t.test("rechazar medición detiene Pixel y reactivarlo no duplica PageView ni ViewContent", () => {
     let state = { pageViewSent: false, viewContentPending: true, viewContentSent: false };
     let transition = client.measurementTransition(state, true);
     assert.deepEqual(transition.events, ["PageView", "ViewContent"]);
@@ -79,8 +86,19 @@ test("suite auditable del lead", async (t) => {
     assert.deepEqual(transition.events, []);
     transition = client.measurementTransition(transition.state, true);
     assert.deepEqual(transition.events, []);
-    const frontend = require("node:fs").readFileSync("js/main.js", "utf8");
-    assert.match(frontend, /\[name=analytics_consent\]"\)\.addEventListener\("change"/);
+    const frontend = fs.readFileSync("js/main.js", "utf8");
+    assert.match(frontend, /if \(!pixelReady \|\| consent !== true\) return/);
+    assert.match(frontend, /const wantsAnalytics = consent === true/);
+  });
+  await t.test("el formulario usa la preferencia guardada sin checkbox y Privacidad permite cambiarla", () => {
+    const html = fs.readFileSync("index.html", "utf8");
+    const frontend = fs.readFileSync("js/main.js", "utf8");
+    assert.doesNotMatch(html, /name="analytics_consent"/);
+    assert.doesNotMatch(html, /Acepto la medición publicitaria con Meta/);
+    assert.match(html, /data-consent-settings>Cambiar preferencias de privacidad/);
+    assert.match(frontend, /storage\.get\("me_analytics_consent"\)/);
+    assert.match(frontend, /analytics_consent: wantsAnalytics/);
+    assert.match(frontend, /openingConsentSettings[\s\S]+banner\.querySelector\("button"\)\.focus\(\)/);
   });
   await t.test("fallback fbc prioriza fbclid y timestamp del último touch", () => {
     const attribution = {
