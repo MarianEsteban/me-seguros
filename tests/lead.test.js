@@ -70,6 +70,26 @@ test("suite auditable del lead", async (t) => {
     await api.sendCapi({ ...base, analytics_consent: true }, { headers: {}, socket: {} }); assert.equal(payload.data[0].event_id, base.event_id);
     const frontend = require("node:fs").readFileSync("js/main.js", "utf8"); assert.match(frontend, /track\("Lead", \{ content_name: type\.value \}, currentEventId\)/); assert.match(frontend, /event_id: currentEventId/); delete process.env.META_PIXEL_ID; delete process.env.META_ACCESS_TOKEN;
   });
+  await t.test("destildar consentimiento detiene eventos y reactivarlo no duplica PageView ni ViewContent", () => {
+    let state = { pageViewSent: false, viewContentPending: true, viewContentSent: false };
+    let transition = client.measurementTransition(state, true);
+    assert.deepEqual(transition.events, ["PageView", "ViewContent"]);
+    state = transition.state;
+    transition = client.measurementTransition(state, false);
+    assert.deepEqual(transition.events, []);
+    transition = client.measurementTransition(transition.state, true);
+    assert.deepEqual(transition.events, []);
+    const frontend = require("node:fs").readFileSync("js/main.js", "utf8");
+    assert.match(frontend, /\[name=analytics_consent\]"\)\.addEventListener\("change"/);
+  });
+  await t.test("fallback fbc prioriza fbclid y timestamp del último touch", () => {
+    const attribution = {
+      first_touch: { fbclid: "click-viejo", captured_at: "2026-01-01T00:00:00.000Z" },
+      last_touch: { fbclid: "click-reciente", captured_at: "2026-09-16T12:00:00.000Z" }
+    };
+    assert.equal(client.buildFbc(attribution), `fb.1.${Date.parse(attribution.last_touch.captured_at)}.click-reciente`);
+    assert.equal(client.buildFbc(attribution, "fb.1.cookie.actual"), "fb.1.cookie.actual");
+  });
 });
 
 test.after(() => { global.fetch = originalFetch; Object.keys(process.env).forEach((key) => { if (!(key in originalEnv)) delete process.env[key]; }); Object.assign(process.env, originalEnv); });

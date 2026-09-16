@@ -1,7 +1,7 @@
 (() => {
   "use strict";
   const CONFIG = window.ME_CONFIG || {};
-  const { validateLead } = window.MEValidation;
+  const { validateLead, measurementTransition, buildFbc } = window.MEValidation;
   const WHATSAPP = "5492291515617";
   const ATTR_KEYS = ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term", "fbclid"];
   const messages = {
@@ -19,8 +19,7 @@
   const cookie = (name) => document.cookie.split("; ").find((item) => item.startsWith(`${name}=`))?.split("=").slice(1).join("=") || "";
   let currentEventId = uuid();
   let pixelReady = false;
-  let viewContentPending = false;
-  let viewContentSent = false;
+  let measurementState = { pageViewSent: false, viewContentPending: false, viewContentSent: false };
   let consent = storage.get("me_analytics_consent");
   consent = consent === "granted" ? true : consent === "denied" ? false : null;
 
@@ -42,23 +41,30 @@
     const fbq = window.fbq = function () { fbq.callMethod ? fbq.callMethod.apply(fbq, arguments) : fbq.queue.push(arguments); };
     fbq.push = fbq; fbq.loaded = true; fbq.version = "2.0"; fbq.queue = [];
     const script = document.createElement("script"); script.async = true; script.src = "https://connect.facebook.net/en_US/fbevents.js"; document.head.appendChild(script);
-    fbq("init", CONFIG.META_PIXEL_ID); fbq("track", "PageView"); pixelReady = true;
+    fbq("init", CONFIG.META_PIXEL_ID); pixelReady = true;
     attributionSnapshot();
-    if (viewContentPending && !viewContentSent) emitViewContent();
+    flushMeasurementEvents();
   }
   function track(name, data = {}, eventId) {
     if (!pixelReady || consent !== true) return;
     if (eventId) window.fbq("track", name, data, { eventID: eventId }); else window.fbq("track", name, data);
   }
-  function emitViewContent() { if (consent === true && pixelReady && !viewContentSent) { track("ViewContent", { content_name: "Formulario de cotización" }); viewContentSent = true; viewContentPending = false; } }
-  function markFormViewed() { if (viewContentSent) return; viewContentPending = true; if (consent === true) emitViewContent(); }
+  function flushMeasurementEvents() {
+    const transition = measurementTransition(measurementState, consent === true && pixelReady);
+    measurementState = transition.state;
+    transition.events.forEach((name) => track(name, name === "ViewContent" ? { content_name: "Formulario de cotización" } : {}));
+  }
+  function markFormViewed() {
+    if (measurementState.viewContentSent) return;
+    measurementState.viewContentPending = true;
+    flushMeasurementEvents();
+  }
   function setConsent(value) {
-    const previouslyGranted = consent === true;
     consent = value;
     storage.set("me_analytics_consent", value ? "granted" : "denied");
     document.querySelector("[name=analytics_consent]").checked = value;
     document.querySelector("#consent-banner").hidden = true;
-    if (value) { if (pixelReady && !previouslyGranted) { attributionSnapshot(); track("PageView"); if (viewContentPending) emitViewContent(); } else initPixel(); }
+    if (value) { if (pixelReady) { attributionSnapshot(); flushMeasurementEvents(); } else initPixel(); }
     else { storage.remove("me_attribution"); ["_fbp", "_fbc"].forEach((name) => { document.cookie = `${name}=; Max-Age=0; path=/; SameSite=Lax`; }); }
   }
 
@@ -66,6 +72,7 @@
   if (consent === null) banner.hidden = false; else document.querySelector("[name=analytics_consent]").checked = consent;
   document.querySelector("[data-consent-accept]").addEventListener("click", () => setConsent(true));
   document.querySelector("[data-consent-reject]").addEventListener("click", () => setConsent(false));
+  document.querySelector("[name=analytics_consent]").addEventListener("change", (event) => setConsent(event.currentTarget.checked));
   document.querySelector("[data-consent-settings]").addEventListener("click", () => { banner.hidden = false; banner.querySelector("button").focus(); });
   initPixel();
 
@@ -98,7 +105,7 @@
     if (wantsAnalytics !== consent) setConsent(wantsAnalytics);
     const attribution = attributionSnapshot();
     const payload = { ...values, consent: true, analytics_consent: wantsAnalytics, event_id: currentEventId, event_source_url: location.href, converted_at: new Date().toISOString(), attribution,
-      fbp: wantsAnalytics ? cookie("_fbp") : "", fbc: wantsAnalytics ? (cookie("_fbc") || (attribution.first_touch?.fbclid ? `fb.1.${Date.parse(attribution.first_touch.captured_at)}.${attribution.first_touch.fbclid}` : "")) : "" };
+      fbp: wantsAnalytics ? cookie("_fbp") : "", fbc: wantsAnalytics ? buildFbc(attribution, cookie("_fbc")) : "" };
     const button = form.querySelector("[type=submit]"); const status = document.querySelector("#form-status"); button.disabled = true; button.textContent = "Enviando…"; status.classList.remove("visible");
     try {
       const response = await fetch("/api/lead", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });

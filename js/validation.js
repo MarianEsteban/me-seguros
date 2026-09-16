@@ -28,5 +28,26 @@
     if (data.consent !== true) errors.consent = "Necesitamos tu autorización para responder la consulta.";
     return errors;
   }
-  return { normalizeArgentinePhone, validateLead };
+  function measurementTransition(state, enabled) {
+    const next = { ...state };
+    const events = [];
+    if (!enabled) return { state: next, events };
+    if (!next.pageViewSent) {
+      next.pageViewSent = true;
+      events.push("PageView");
+    }
+    if (next.viewContentPending && !next.viewContentSent) {
+      next.viewContentPending = false;
+      next.viewContentSent = true;
+      events.push("ViewContent");
+    }
+    return { state: next, events };
+  }
+  function buildFbc(attribution, cookieFbc = "") {
+    if (cookieFbc) return cookieFbc;
+    const touch = attribution?.last_touch?.fbclid ? attribution.last_touch : attribution?.first_touch?.fbclid ? attribution.first_touch : null;
+    const timestamp = Date.parse(touch?.captured_at || "");
+    return touch && Number.isFinite(timestamp) ? `fb.1.${timestamp}.${touch.fbclid}` : "";
+  }
+  return { normalizeArgentinePhone, validateLead, measurementTransition, buildFbc };
 });
