@@ -20,6 +20,7 @@
   let currentEventId = uuid();
   let pixelReady = false;
   let measurementState = { pageViewSent: false, viewContentPending: false, viewContentSent: false };
+  let consentReturnFocus;
   let consent = storage.get("me_analytics_consent");
   consent = consent === "granted" ? true : consent === "denied" ? false : null;
 
@@ -62,18 +63,17 @@
   function setConsent(value) {
     consent = value;
     storage.set("me_analytics_consent", value ? "granted" : "denied");
-    document.querySelector("[name=analytics_consent]").checked = value;
     document.querySelector("#consent-banner").hidden = true;
+    consentReturnFocus?.focus();
+    consentReturnFocus = undefined;
     if (value) { if (pixelReady) { attributionSnapshot(); flushMeasurementEvents(); } else initPixel(); }
     else { storage.remove("me_attribution"); ["_fbp", "_fbc"].forEach((name) => { document.cookie = `${name}=; Max-Age=0; path=/; SameSite=Lax`; }); }
   }
 
   const banner = document.querySelector("#consent-banner");
-  if (consent === null) banner.hidden = false; else document.querySelector("[name=analytics_consent]").checked = consent;
+  if (consent === null) banner.hidden = false;
   document.querySelector("[data-consent-accept]").addEventListener("click", () => setConsent(true));
   document.querySelector("[data-consent-reject]").addEventListener("click", () => setConsent(false));
-  document.querySelector("[name=analytics_consent]").addEventListener("change", (event) => setConsent(event.currentTarget.checked));
-  document.querySelector("[data-consent-settings]").addEventListener("click", () => { banner.hidden = false; banner.querySelector("button").focus(); });
   initPixel();
 
   document.querySelector("#current-year").textContent = new Date().getFullYear();
@@ -101,8 +101,7 @@
     event.preventDefault();
     const values = Object.fromEntries(new FormData(form)); values.consent = form.elements.consent.checked;
     const errors = validateLead(values); showErrors(errors); if (Object.keys(errors).length) return;
-    const wantsAnalytics = form.elements.analytics_consent.checked === true;
-    if (wantsAnalytics !== consent) setConsent(wantsAnalytics);
+    const wantsAnalytics = consent === true;
     const attribution = attributionSnapshot();
     const payload = { ...values, consent: true, analytics_consent: wantsAnalytics, event_id: currentEventId, event_source_url: location.href, converted_at: new Date().toISOString(), attribution,
       fbp: wantsAnalytics ? cookie("_fbp") : "", fbc: wantsAnalytics ? buildFbc(attribution, cookie("_fbc")) : "" };
@@ -116,11 +115,22 @@
     } catch (error) { status.textContent = error.message || "No pudimos entregar la consulta. Intentá nuevamente o usá WhatsApp."; status.classList.add("visible"); }
     finally { button.disabled = false; button.textContent = "Solicitar cotización"; }
   });
-  document.querySelector("#new-inquiry").addEventListener("click", () => { currentEventId = uuid(); form.reset(); form.elements.analytics_consent.checked = consent === true; toggleVehicle(); form.hidden = false; document.querySelector("#success-panel").hidden = true; document.querySelector("#name").focus(); });
+  document.querySelector("#new-inquiry").addEventListener("click", () => { currentEventId = uuid(); form.reset(); toggleVehicle(); form.hidden = false; document.querySelector("#success-panel").hidden = true; document.querySelector("#name").focus(); });
 
-  const dialog = document.querySelector("#privacy-dialog"); let dialogTrigger;
+  const dialog = document.querySelector("#privacy-dialog"); let dialogTrigger; let openingConsentSettings = false;
   document.querySelectorAll("[data-modal-open]").forEach((button) => button.addEventListener("click", () => { dialogTrigger = button; dialog.showModal(); }));
   document.querySelector("[data-modal-close]").addEventListener("click", () => dialog.close());
+  document.querySelector("[data-consent-settings]").addEventListener("click", () => {
+    banner.hidden = false;
+    consentReturnFocus = dialogTrigger;
+    openingConsentSettings = true;
+    dialog.close();
+  });
   dialog.addEventListener("click", (event) => { if (event.target === dialog) dialog.close(); });
-  dialog.addEventListener("close", () => dialogTrigger?.focus());
+  dialog.addEventListener("close", () => {
+    if (openingConsentSettings) {
+      openingConsentSettings = false;
+      banner.querySelector("button").focus();
+    } else dialogTrigger?.focus();
+  });
 })();
