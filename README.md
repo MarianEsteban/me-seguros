@@ -41,9 +41,9 @@ Copiar los nombres de `.env.example` en **Project Settings → Environment Varia
 
 Nunca agregar claves o tokens a `js/config.js`. `META_PIXEL_ID` es el único dato público requerido allí.
 
-## Dominio y SEO: bloqueo deliberado antes del deploy
+## Dominio y SEO
 
-El dominio final no fue informado. Para no inventarlo, `index.html` usa el marcador inequívoco `https://REEMPLAZAR-CON-DOMINIO-REAL.example/` en canonical, `og:url`, `og:image` y Schema. **Antes de publicar**, reemplazar todas sus apariciones por el dominio HTTPS real y agregar esos mismos orígenes a `ALLOWED_ORIGINS`. No lanzar campañas con el marcador.
+`index.html` usa el dominio canónico de producción `https://www.mestebanseguros.com.ar/` en canonical, `og:url`, `og:image` y Schema. El mismo origen debe estar configurado en `ALLOWED_ORIGINS`.
 
 ## Pasos manuales
 
@@ -53,7 +53,7 @@ El dominio final no fue informado. Para no inventarlo, `index.html` usa el marca
 2. No configurar un directorio separado ni GitHub Pages: Vercel debe servir frontend y `/api/lead` juntos.
 3. Crear las variables anteriores para Production (y valores aislados para Preview si se prueba allí).
 4. Crear/conectar Upstash Redis o Vercel KV REST y comprobar que inyecte URL y token compatibles.
-5. Asignar el dominio definitivo, reemplazar el marcador SEO, actualizar `ALLOWED_ORIGINS` y desplegar.
+5. Asignar el dominio de producción, actualizar `ALLOWED_ORIGINS` y desplegar.
 6. Enviar un lead real y comprobar email, respuesta JSON, logs y headers de seguridad.
 
 ### Resend
@@ -84,7 +84,7 @@ Para pruebas locales completas, usar `vercel dev`; localhost está permitido exc
 
 ## Pendientes operativos no públicos
 
-- Confirmar dominio final y reemplazar el marcador SEO.
+- Confirmar la configuración del dominio de producción y sus registros DNS.
 - Completar valores reales de Vercel, verificar Resend y configurar Meta.
 - Definir internamente el plazo de retención y el procedimiento para solicitudes de privacidad; el aviso público ya está redactado sin notas de trabajo.
 - Realizar control legal final del aviso para la operación concreta de Mariano antes de invertir en pauta.
